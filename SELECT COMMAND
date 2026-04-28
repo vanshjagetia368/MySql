@@ -1,0 +1,149 @@
+SQL SELECT Statement
+
+The SQL SELECT statement is used to retrieve data from a database table.
+It is the most common command to query and view data.
+
+Basic Purpose:
+- Choose one or more columns from a table.
+- Filter, sort, and shape the returned result.
+- Return only the rows you want to see.
+
+SELECT Syntax:
+SELECT column1, column2, ...
+FROM table_name;
+
+column1, column2, ... are the names of the columns you want to retrieve.
+table_name is the name of the table containing the data.
+
+Example 1: Select Specific Columns
+Return the customer name and city from the Customers table:
+SELECT CustomerName, City
+FROM Customers;
+
+What this does:
+This query returns only the CustomerName and City columns from every row in the Customers table.
+When to use it:
+Use this when you only need a small subset of columns from a table and want to keep the result narrow.
+
+Expected Result:
+CustomerName                     City
+--------------------------------- ---------
+Alfreds Futterkiste              Berlin
+Ana Trujillo Emparedados y helados México D.F.
+Antonio Moreno Taquería           México D.F.
+Around the Horn                   London
+Berglunds snabbköp                Luleå
+
+Example 2: Select All Columns
+To retrieve every column from a table without listing them individually, use:
+SELECT *
+FROM Customers;
+
+What this does:
+This query returns every column from every row in the Customers table.
+When to use it:
+Use this for quick data review or when you need all available data for each record.
+
+Example 3: Select with WHERE
+Return the customers located in Mexico:
+SELECT CustomerName, City, Country
+FROM Customers
+WHERE Country = 'Mexico';
+
+What this does:
+This query filters rows to include only those where Country is Mexico.
+When to use it:
+Use this when you need specific rows that match a condition.
+
+Expected Result:
+CustomerName                     City       Country
+--------------------------------- ---------- -------
+Ana Trujillo Emparedados y helados México D.F. Mexico
+Antonio Moreno Taquería           México D.F. Mexico
+
+Example 4: Select with ORDER BY
+Return customers sorted by CustomerName:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+ORDER BY CustomerName;
+
+What this does:
+This query returns selected columns and sorts the result alphabetically by CustomerName.
+When to use it:
+Use this when you want sorted output for easier reading or reporting.
+
+Example 5: Select with LIMIT
+Show only the first 3 customers:
+SELECT CustomerID, CustomerName, City
+FROM Customers
+LIMIT 3;
+
+What this does:
+This query returns only the first three rows from the result set.
+When to use it:
+Use this when you want a small sample of rows or when using pagination.
+
+If your SQL dialect uses TOP instead of LIMIT, use:
+SELECT TOP 3 CustomerID, CustomerName, City
+FROM Customers;
+
+Example 6: Select with WHERE and AND
+Return customers from Mexico whose city is México D.F.:
+SELECT CustomerName, Address, City, Country
+FROM Customers
+WHERE Country = 'Mexico' AND City = 'México D.F.';
+
+What this does:
+This query filters rows using two conditions that both must be true.
+When to use it:
+Use this when you need records that satisfy multiple criteria simultaneously.
+
+Example 7: Select with WHERE and OR
+Return customers in Germany or Sweden:
+SELECT CustomerName, City, Country
+FROM Customers
+WHERE Country = 'Germany' OR Country = 'Sweden';
+
+What this does:
+This query returns rows where Country is either Germany or Sweden.
+When to use it:
+Use this when any of several conditions should be accepted.
+
+Example 8: Select using a column alias
+Show customer ID and the country name as CountryName:
+SELECT CustomerID, CustomerName, Country AS CountryName
+FROM Customers;
+
+What this does:
+This query renames the Country column in the result to CountryName.
+When to use it:
+Use this to make result column names more descriptive or user-friendly.
+
+Demo Data
+The example below shows a small selection from the Customers table.
+
+CustomerID  CustomerName                        ContactName       Address                           City        PostalCode  Country
+1           Alfreds Futterkiste                 Maria Anders      Obere Str. 57                     Berlin      12209       Germany
+2           Ana Trujillo Emparedados y helados  Ana Trujillo      Avda. de la Constitución 2222     México D.F. 05021       Mexico
+3           Antonio Moreno Taquería             Antonio Moreno    Mataderos 2312                    México D.F. 05023       Mexico
+4           Around the Horn                     Thomas Hardy      120 Hanover Sq.                   London      WA1 1DP     UK
+5           Berglunds snabbköp                  Christina Berglund Berguvsvägen 8                  Luleå       S-958 22    Sweden
+
+Tips for Using SELECT:
+- Use SELECT column1, column2 when you need only certain columns.
+- Use SELECT * when you need every column for each row.
+- Use WHERE to return only rows that match a condition.
+- Use ORDER BY to sort results by one or more columns.
+- Use LIMIT or TOP to return only a fixed number of rows.
+- Use AND and OR to combine conditions.
+
+Summary:
+- SELECT retrieves data from a table.
+- SELECT column1, column2 chooses specific fields.
+- SELECT * selects every field.
+- FROM table_name identifies the source table.
+- WHERE filters rows by condition.
+- ORDER BY sorts the result.
+- LIMIT controls how many rows are returned.
+
+Use this file as a quick reference for many common SELECT query patterns.

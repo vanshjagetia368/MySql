@@ -1,0 +1,160 @@
+SQL SELECT DISTINCT Statement
+
+The SQL SELECT DISTINCT statement returns only unique values from a column or combination of columns.
+Use it when a table contains duplicate values and you want to see each value only once.
+
+Purpose:
+- Remove duplicate rows from the query result.
+- Return unique values for one or more columns.
+- Group repeated values into a single result row.
+
+SELECT DISTINCT Syntax:
+SELECT DISTINCT column1, column2, ...
+FROM table_name;
+
+column1, column2, ... are the columns you want to retrieve.
+table_name is the source table.
+
+Example 1: Select Unique Countries
+Return the distinct countries from the Customers table:
+SELECT DISTINCT Country
+FROM Customers;
+
+What this does:
+This query returns each country only once, even if it appears many times in the table.
+When to use it:
+Use this when you need a list of all unique values in a column.
+
+Expected Output:
+Country
+Germany
+Mexico
+UK
+Sweden
+
+Example 2: Select Unique Country and City Combinations
+Return each distinct city/country pair:
+SELECT DISTINCT City, Country
+FROM Customers;
+
+What this does:
+This query returns unique combinations of City and Country.
+When to use it:
+Use this when the uniqueness depends on multiple columns together.
+
+Expected Output:
+City        Country
+Berlin      Germany
+México D.F. Mexico
+London      UK
+Luleå       Sweden
+
+Example 3: Select Unique Countries with ORDER BY
+Return distinct countries in alphabetical order:
+SELECT DISTINCT Country
+FROM Customers
+ORDER BY Country;
+
+What this does:
+This query returns the unique countries and sorts them alphabetically.
+When to use it:
+Use this to get an ordered list of unique values.
+
+Expected Output:
+Country
+Germany
+Mexico
+Sweden
+UK
+
+Example 4: Use DISTINCT with WHERE
+Return distinct countries for customers whose city is London:
+SELECT DISTINCT Country
+FROM Customers
+WHERE City = 'London';
+
+What this does:
+This query finds unique countries only among rows where City is London.
+When to use it:
+Use this to filter first and then deduplicate the result.
+
+Expected Output:
+Country
+UK
+
+Example 5: Use DISTINCT with multiple columns and ORDER BY
+Return unique combinations of customer city and country sorted by city:
+SELECT DISTINCT City, Country
+FROM Customers
+ORDER BY City;
+
+What this does:
+This query returns unique city/country rows and sorts them by city.
+When to use it:
+Use this when you need sorted, unique composite values.
+
+Expected Output:
+City        Country
+Berlin      Germany
+London      UK
+Luleå       Sweden
+México D.F. Mexico
+
+Example 6: Count Distinct Values
+Use COUNT(DISTINCT ...) to count unique values.
+SELECT COUNT(DISTINCT Country)
+FROM Customers;
+
+What this does:
+This query returns the number of different countries in the table.
+When to use it:
+Use this when you need a count of unique values.
+
+Expected Output:
+COUNT(DISTINCT Country)
+4
+
+Example 7: Distinct values plus an alias
+Count the number of distinct countries and label the result:
+SELECT COUNT(DISTINCT Country) AS UniqueCountryCount
+FROM Customers;
+
+What this does:
+This query counts unique countries and displays the count with a clear column name.
+When to use it:
+Use this when you want a readable result column name.
+
+Expected Output:
+UniqueCountryCount
+4
+
+Note for Microsoft Access:
+COUNT(DISTINCT column_name) is not supported in Microsoft Access.
+Instead, use a subquery:
+SELECT Count(*) AS DistinctCountries
+FROM (SELECT DISTINCT Country FROM Customers);
+
+Demo Data
+A small selection from the Customers table used in these examples.
+
+CustomerID  CustomerName                       ContactName      Address                         City        PostalCode  Country
+1           Alfreds Futterkiste                 Maria Anders     Obere Str. 57                   Berlin      12209       Germany
+2           Ana Trujillo Emparedados y helados  Ana Trujillo     Avda. de la Constitución 2222   México D.F. 05021       Mexico
+3           Antonio Moreno Taquería             Antonio Moreno   Mataderos 2312                  México D.F. 05023       Mexico
+4           Around the Horn                     Thomas Hardy     120 Hanover Sq.                 London      WA1 1DP     UK
+5           Berglunds snabbköp                  Christina Berglund Berguvsvägen 8              Luleå       S-958 22    Sweden
+
+Tips for Using SELECT DISTINCT:
+- Use DISTINCT to remove duplicate rows from your result.
+- DISTINCT applies to all selected columns together.
+- Use DISTINCT with ORDER BY to sort unique values.
+- Use COUNT(DISTINCT ...) to count unique values when supported by your database.
+- In Access, use a subquery when COUNT(DISTINCT ...) is not supported.
+
+Key Points:
+- SELECT DISTINCT removes duplicate rows from the result.
+- SELECT DISTINCT column1, column2 returns unique combinations.
+- Use COUNT(DISTINCT column) to count unique values when supported.
+- In Access, use a distinct subquery inside Count(*).
+
+Use this file as a reference for working with unique values in SQL queries.
