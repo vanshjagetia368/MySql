@@ -1,0 +1,185 @@
+MySQL Commands List with Detailed Description
+
+1. SELECT - Retrieves data from one or more tables. Can specify columns, apply filters, joins, sorting, and aggregation.
+
+2. INSERT - Adds new records into a table. Can insert single or multiple rows using VALUES or from another query.
+
+3. UPDATE - Modifies existing records in a table based on conditions using WHERE clause.
+
+4. DELETE - Removes records from a table. Without WHERE, it deletes all rows.
+
+5. REPLACE - Inserts a new row or replaces an existing row if a duplicate key conflict occurs.
+
+6. CREATE DATABASE - Creates a new database schema to store tables and other objects.
+
+7. DROP DATABASE - Permanently deletes a database and all its contents.
+
+8. ALTER DATABASE - Modifies database properties such as character set or collation.
+
+9. CREATE TABLE - Creates a new table with defined columns, data types, and constraints.
+
+10. DROP TABLE - Deletes a table and all its data permanently.
+
+11. ALTER TABLE - Modifies table structure (add, modify, or drop columns, constraints, indexes).
+
+12. TRUNCATE TABLE - Quickly removes all rows from a table and resets auto-increment values.
+
+13. RENAME TABLE - Changes the name of an existing table.
+
+14. CREATE INDEX - Creates an index on columns to speed up data retrieval operations.
+
+15. DROP INDEX - Removes an index from a table.
+
+16. CREATE VIEW - Creates a virtual table based on a SELECT query; does not store data physically.
+
+17. ALTER VIEW - Modifies the definition of an existing view.
+
+18. DROP VIEW - Deletes a view from the database.
+
+19. CREATE PROCEDURE - Defines a stored procedure (a reusable block of SQL statements).
+
+20. ALTER PROCEDURE - Modifies an existing stored procedure.
+
+21. DROP PROCEDURE - Deletes a stored procedure.
+
+22. CREATE FUNCTION - Defines a user-defined function that returns a value.
+
+23. DROP FUNCTION - Deletes a function.
+
+24. CREATE TRIGGER - Creates a trigger that executes automatically on INSERT, UPDATE, or DELETE events.
+
+25. DROP TRIGGER - Removes a trigger.
+
+26. CREATE EVENT - Creates a scheduled task that runs automatically at specified intervals.
+
+27. ALTER EVENT - Modifies a scheduled event.
+
+28. DROP EVENT - Deletes an event.
+
+29. GRANT - Assigns privileges (like SELECT, INSERT) to users or roles.
+
+30. REVOKE - Removes previously granted privileges.
+
+31. START TRANSACTION - Begins a transaction block to execute multiple statements as one unit.
+
+32. BEGIN - Another way to start a transaction (same as START TRANSACTION).
+
+33. COMMIT - Saves all changes made during the transaction permanently.
+
+34. ROLLBACK - Reverts all changes made during the transaction.
+
+35. SAVEPOINT - Creates a checkpoint within a transaction to roll back partially.
+
+36. RELEASE SAVEPOINT - Removes a savepoint.
+
+37. SET TRANSACTION - Defines transaction properties like isolation level.
+
+38. SET AUTOCOMMIT - Enables or disables automatic committing of statements.
+
+39. WHERE - Filters rows based on specified conditions.
+
+40. GROUP BY - Groups rows sharing the same values for aggregation.
+
+41. HAVING - Filters grouped results (used after GROUP BY).
+
+42. ORDER BY - Sorts query results in ascending (ASC) or descending (DESC) order.
+
+43. LIMIT - Restricts the number of rows returned.
+
+44. OFFSET - Skips a specified number of rows before returning results.
+
+45. INNER JOIN - Returns rows that have matching values in both tables.
+
+46. LEFT JOIN - Returns all rows from the left table and matching rows from the right table.
+
+47. RIGHT JOIN - Returns all rows from the right table and matching rows from the left table.
+
+48. CROSS JOIN - Returns all possible combinations of rows (Cartesian product).
+
+49. NATURAL JOIN - Automatically joins tables based on columns with the same names.
+
+50. USING - Specifies common columns for joining tables when column names are identical.
+
+51. AND - Combines multiple conditions; all must be true.
+
+52. OR - Combines conditions; at least one must be true.
+
+53. NOT - Negates a condition.
+
+54. IN - Checks if a value exists within a list of values.
+
+55. BETWEEN - Filters values within a specified inclusive range.
+
+56. LIKE - Searches for patterns using wildcards (% and _).
+
+57. IS NULL - Checks if a column has NULL values.
+
+58. IS NOT NULL - Checks if a column has non-NULL values.
+
+59. EXISTS - Returns true if a subquery returns any rows.
+
+60. ANY - Compares a value with any value returned by a subquery.
+
+61. ALL - Compares a value with all values returned by a subquery.
+
+62. COUNT() - Returns the number of rows or non-null values.
+
+63. SUM() - Calculates total sum of a numeric column.
+
+64. AVG() - Calculates average value of a numeric column.
+
+65. MIN() - Returns smallest value in a column.
+
+66. MAX() - Returns largest value in a column.
+
+67. WITH - Defines a Common Table Expression (temporary result set for a query).
+
+68. WITH RECURSIVE - Defines recursive queries for hierarchical data.
+
+69. ROW_NUMBER() - Assigns unique sequential numbers to rows.
+
+70. RANK() - Assigns rank with gaps for duplicate values.
+
+71. DENSE_RANK() - Assigns rank without gaps.
+
+72. LAG() - Accesses data from previous row.
+
+73. LEAD() - Accesses data from next row.
+
+74. NTILE() - Divides rows into equal groups.
+
+75. USE - Selects a database to work with.
+
+76. SHOW DATABASES - Lists all databases.
+
+77. SHOW TABLES - Lists all tables in current database.
+
+78. SHOW COLUMNS - Displays structure of a table.
+
+79. SHOW INDEX - Displays indexes of a table.
+
+80. SHOW STATUS - Displays server status information.
+
+81. SHOW VARIABLES - Displays system configuration variables.
+
+82. DESCRIBE (DESC) - Shows column details of a table.
+
+83. EXPLAIN - Shows how a query will be executed (execution plan).
+
+84. LOAD DATA INFILE - Imports data from a file into a table.
+
+85. SELECT INTO OUTFILE - Exports query results into a file.
+
+86. LOCK TABLES - Locks tables to control concurrent access.
+
+87. UNLOCK TABLES - Releases locks on tables.
+
+88. DISTINCT - Returns only unique values.
+
+89. AS - Assigns alias names to columns or tables.
+
+90. CASE - Implements conditional logic in queries (like IF-ELSE).
+
+91. UNION - Combines results of multiple queries and removes duplicates.
+
+92. UNION ALL - Combines results including duplicates.
