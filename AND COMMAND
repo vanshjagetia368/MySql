@@ -1,0 +1,219 @@
+SQL AND Operator
+
+The SQL AND operator is used in the WHERE clause to filter records based on more than one condition.
+A row is returned only when every condition joined by AND evaluates to TRUE.
+
+AND Syntax:
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition1 AND condition2 AND condition3 ...;
+
+Example 1: Simple AND Condition
+Select all customers from Spain whose name starts with G:
+SELECT *
+FROM Customers
+WHERE Country = 'Spain' AND CustomerName LIKE 'G%';
+
+What this does:
+This query returns rows where both Country is Spain and the customer name begins with G.
+When to use it:
+Use this when multiple filters must all be satisfied.
+
+Example 2: AND with Numeric Comparison
+Select customers from Brazil with CustomerID greater than 50:
+SELECT *
+FROM Customers
+WHERE Country = 'Brazil' AND City = 'Rio de Janeiro' AND CustomerID > 50;
+
+What this does:
+This query returns only rows that satisfy all three conditions.
+When to use it:
+Use this when you need strict filtering across multiple fields.
+
+Example 3: Combining multiple text conditions
+Select customers from Mexico in the city México D.F.:
+SELECT CustomerName, City, Country
+FROM Customers
+WHERE Country = 'Mexico' AND City = 'México D.F.';
+
+What this does:
+This query returns Mexican customers located in México D.F.
+When to use it:
+Use this when you need a specific country and city combination.
+
+Example 4: AND with a range and text condition
+Select customers from Germany with CustomerID between 1 and 10:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Germany' AND CustomerID BETWEEN 1 AND 10;
+
+What this does:
+This query returns German customers whose IDs are within a range.
+When to use it:
+Use this when you need both a text match and a numeric range.
+
+Example 5: AND with a pattern and numeric filter
+Select customers whose name starts with 'A' and whose ID is less than 20:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE CustomerName LIKE 'A%' AND CustomerID < 20;
+
+What this does:
+This query returns rows that match a name pattern and a numeric limit.
+When to use it:
+Use this when you need both pattern matching and numeric filtering.
+
+Example 6: AND with multiple numeric conditions
+Select customers with ID greater than 1 and less than or equal to 5:
+SELECT CustomerID, CustomerName
+FROM Customers
+WHERE CustomerID > 1 AND CustomerID <= 5;
+
+What this does:
+This query returns customers with IDs 2 through 5.
+When to use it:
+Use this to specify a bounded numeric range with AND.
+
+Example 7: AND with a text condition and an alias
+Select customers in Sweden and show the country as CountryName:
+SELECT CustomerID, CustomerName, Country AS CountryName
+FROM Customers
+WHERE Country = 'Sweden' AND City = 'Luleå';
+
+What this does:
+This query filters by country and city and renames the output column.
+When to use it:
+Use this for filtered results with clearer column labels.
+
+Example 8: AND with ORDER BY
+Select customers from the UK and order by CustomerName:
+SELECT CustomerID, CustomerName, City, Country
+FROM Customers
+WHERE Country = 'UK' AND City = 'London'
+ORDER BY CustomerName;
+
+What this does:
+This query filters UK London customers and sorts them by name.
+When to use it:
+Use this when you need ordered results for a specific filtered subset.
+
+Example 9: AND with LIMIT
+Select the first 2 matching Swedish customers:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Sweden' AND City = 'Luleå'
+LIMIT 2;
+
+What this does:
+This query returns only the first two rows that match the filter.
+When to use it:
+Use this to limit the number of matching rows returned.
+
+Example 10: AND in UPDATE and DELETE
+Update all Mexican customers in México D.F. to a new city:
+UPDATE Customers
+SET City = 'Mexico City'
+WHERE Country = 'Mexico' AND City = 'México D.F.';
+
+What this does:
+This update changes only the filtered rows that match both conditions.
+When to use it:
+Use this for a precise bulk update on specific records.
+
+Delete all customers in the UK and London:
+DELETE FROM Customers
+WHERE Country = 'UK' AND City = 'London';
+
+What this does:
+This delete removes only the rows that meet both country and city criteria.
+When to use it:
+Use this to delete a narrowly defined subset of rows.
+
+AND vs OR
+----------
+- AND requires all conditions to be true.
+- OR requires any one of the conditions to be true.
+
+Example 11: AND only
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Spain' AND CustomerName LIKE 'G%';
+
+What this does:
+This query returns Spanish customers whose names start with G.
+When to use it:
+Use this when both filters are required.
+
+Example 12: OR only
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Spain' OR Country = 'Mexico';
+
+What this does:
+This query returns customers from either Spain or Mexico.
+When to use it:
+Use this when any one of several values is acceptable.
+
+Example 13: AND combined with OR
+Select Spanish customers whose name starts with G or R:
+SELECT *
+FROM Customers
+WHERE Country = 'Spain' AND (CustomerName LIKE 'G%' OR CustomerName LIKE 'R%');
+
+What this does:
+This query returns Spanish customers whose name starts with G or R.
+When to use it:
+Use this to combine strict and flexible conditions.
+
+Why parentheses are important:
+Without parentheses, this query changes meaning:
+SELECT *
+FROM Customers
+WHERE Country = 'Spain' AND CustomerName LIKE 'G%' OR CustomerName LIKE 'R%';
+
+What this does:
+This query returns Spanish customers starting with G and all customers starting with R.
+When to use it:
+Use parentheses to enforce the intended logic.
+
+Example 14: AND with multiple OR groups
+Select customers from Mexico or the UK whose names start with A:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE (Country = 'Mexico' OR Country = 'UK')
+  AND CustomerName LIKE 'A%';
+
+What this does:
+This query returns A-names from Mexico or the UK.
+When to use it:
+Use this when you need a combined group filter and pattern filter.
+
+Example 15: AND with IN and LIKE
+Select customers from Germany or Sweden whose names start with B:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country IN ('Germany', 'Sweden')
+  AND CustomerName LIKE 'B%';
+
+What this does:
+This query returns B-name customers in Germany or Sweden.
+When to use it:
+Use this to combine a list filter with a pattern filter.
+
+Demo Data
+A small selection from the Customers table used in these examples.
+
+CustomerID  CustomerName                        ContactName       Address                           City        PostalCode  Country
+1           Alfreds Futterkiste                 Maria Anders      Obere Str. 57                     Berlin      12209       Germany
+2           Ana Trujillo Emparedados y helados  Ana Trujillo      Avda. de la Constitución 2222     México D.F. 05021       Mexico
+3           Antonio Moreno Taquería             Antonio Moreno    Mataderos 2312                    México D.F. 05023       Mexico
+4           Around the Horn                     Thomas Hardy      120 Hanover Sq.                   London      WA1 1DP     UK
+5           Berglunds snabbköp                  Christina Berglund Berguvsvägen 8                  Luleå       S-958 22    Sweden
+
+Tips for AND:
+- Use AND when every condition must be true.
+- Add parentheses when combining AND with OR.
+- Use AND with text, numeric, pattern, and range filters.
+- AND works in SELECT, UPDATE, DELETE, and other SQL statements.
+
+Use this file as a complete reference for the SQL AND operator and many examples.

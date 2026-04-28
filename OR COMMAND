@@ -1,0 +1,216 @@
+SQL OR Operator
+
+The SQL OR operator is used in the WHERE clause to filter records based on more than one condition.
+A record is returned when any one of the conditions joined by OR evaluates to TRUE.
+
+OR Syntax:
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition1 OR condition2 OR condition3 ...;
+
+Example 1: Simple OR Condition
+Select all customers where Country is Germany or Spain:
+SELECT *
+FROM Customers
+WHERE Country = 'Germany' OR Country = 'Spain';
+
+What this does:
+This query returns rows where Country is either Germany or Spain.
+When to use it:
+Use this when any one of several options should be accepted.
+
+Example 2: OR with multiple values
+Select customers from Germany, Spain, or Mexico:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Germany' OR Country = 'Spain' OR Country = 'Mexico';
+
+What this does:
+This query returns rows matching any of the listed countries.
+When to use it:
+Use this for a set of possible values without using IN.
+
+Example 3: OR with text pattern matching
+Select customers in Berlin or whose name starts with G:
+SELECT CustomerID, CustomerName, City, Country
+FROM Customers
+WHERE City = 'Berlin' OR CustomerName LIKE 'G%';
+
+What this does:
+This query returns customers who are either in Berlin or have names beginning with G.
+When to use it:
+Use this when you want either of two different filter types.
+
+Example 4: OR with a non-existent value
+Select customers in London or Norway:
+SELECT CustomerID, CustomerName, City, Country
+FROM Customers
+WHERE City = 'London' OR Country = 'Norway';
+
+What this does:
+This query returns customers in London or any customers from Norway if they exist.
+When to use it:
+Use this when one of the conditions may not match any rows.
+
+Example 5: OR with numeric and text conditions
+Select customers with CustomerID 1 or city Mexico City:
+SELECT CustomerID, CustomerName, City, Country
+FROM Customers
+WHERE CustomerID = 1 OR City = 'Mexico City';
+
+What this does:
+This query returns the row with ID 1 or any customer located in Mexico City.
+When to use it:
+Use this to combine a specific row choice with a location filter.
+
+Example 6: OR with IN as an alternative
+The IN operator is often easier to read than multiple OR conditions:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country IN ('Germany', 'Spain', 'Mexico');
+
+What this does:
+This query returns rows where Country matches any listed value.
+When to use it:
+Use this when you want a cleaner alternative to many OR clauses.
+
+Example 7: OR with ORDER BY
+Select customers from Germany or Sweden and sort by CustomerName:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Germany' OR Country = 'Sweden'
+ORDER BY CustomerName;
+
+What this does:
+This query returns German and Swedish customers sorted by name.
+When to use it:
+Use this when you want ordered results from an OR filter.
+
+Example 8: OR with LIMIT
+Select the first 3 German or Spanish customers:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Germany' OR Country = 'Spain'
+LIMIT 3;
+
+What this does:
+This query returns only the first three matching rows.
+When to use it:
+Use this when you want a limited sample of OR-filtered results.
+
+AND vs OR
+----------
+- AND requires all conditions to be TRUE.
+- OR requires only one of the conditions to be TRUE.
+
+Example 9: OR only
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Spain' OR Country = 'Mexico';
+
+What this does:
+This query returns rows from either Spain or Mexico.
+When to use it:
+Use this when either condition is acceptable.
+
+Example 10: AND only
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Spain' AND City = 'Madrid';
+
+What this does:
+This query returns rows where both conditions hold.
+When to use it:
+Use this when every condition must be true.
+
+Combining AND and OR
+--------------------
+When you combine AND and OR, use parentheses to make sure SQL evaluates the conditions correctly.
+
+Example 11: OR inside AND
+Select Spanish customers that start with G or R:
+SELECT *
+FROM Customers
+WHERE Country = 'Spain' AND (CustomerName LIKE 'G%' OR CustomerName LIKE 'R%');
+
+What this does:
+This query returns Spanish customers whose names begin with G or R.
+When to use it:
+Use this when one strict condition and one flexible condition are required.
+
+Example 12: No parentheses changes meaning
+Without parentheses, the query returns all Spanish customers whose name starts with G,
+plus all customers whose name starts with R regardless of country:
+SELECT *
+FROM Customers
+WHERE Country = 'Spain' AND CustomerName LIKE 'G%' OR CustomerName LIKE 'R%';
+
+What this does:
+This query applies AND before OR and changes the result set.
+When to use it:
+Be careful: use parentheses when intent depends on condition grouping.
+
+Example 13: OR with AND groups
+Select customers from Mexico or the UK whose name starts with A:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE (Country = 'Mexico' OR Country = 'UK')
+  AND CustomerName LIKE 'A%';
+
+What this does:
+This query returns A-name customers in either Mexico or the UK.
+When to use it:
+Use this to mix grouped OR conditions with an AND filter.
+
+Example 14: OR with NOT
+Select customers not from Germany or Mexico:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country <> 'Germany' OR Country <> 'Mexico';
+
+What this does:
+This query returns all rows because one of the OR conditions is always true.
+When to use it:
+Use this as a cautionary example: prefer AND for excluding multiple values.
+
+Example 15: OR with BETWEEN
+Select customers in Germany or with CustomerID between 1 and 5:
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country = 'Germany' OR CustomerID BETWEEN 1 AND 5;
+
+What this does:
+This query returns German customers and any customers with ID 1-5.
+When to use it:
+Use this when you need either a categorical value or a numeric range.
+
+Example 16: OR with LIKE and multiple patterns
+Select customers whose name starts with A or B:
+SELECT CustomerID, CustomerName
+FROM Customers
+WHERE CustomerName LIKE 'A%' OR CustomerName LIKE 'B%';
+
+What this does:
+This query returns customers with names beginning with A or B.
+When to use it:
+Use this to match multiple text patterns.
+
+Demo Data
+---------
+A small selection from the Customers table used in these examples.
+
+CustomerID  CustomerName                        ContactName       Address                           City        PostalCode  Country
+1           Alfreds Futterkiste                 Maria Anders      Obere Str. 57                     Berlin      12209       Germany
+2           Ana Trujillo Emparedados y helados  Ana Trujillo      Avda. de la Constitución 2222     México D.F. 05021       Mexico
+3           Antonio Moreno Taquería             Antonio Moreno    Mataderos 2312                    México D.F. 05023       Mexico
+4           Around the Horn                     Thomas Hardy      120 Hanover Sq.                   London      WA1 1DP     UK
+5           Berglunds snabbköp                  Christina Berglund Berguvsvägen 8                  Luleå       S-958 22    Sweden
+
+Tips for OR:
+- Use OR when only one of several conditions needs to be true.
+- Use parentheses when combining OR with AND.
+- Use IN as a readable alternative to multiple OR conditions.
+- OR can be used with text, numeric, pattern, range, and multiple column conditions.
+- OR is useful in SELECT, UPDATE, DELETE, and other SQL statements.
+
+Use this file as a complete reference for the SQL OR operator with many examples.
