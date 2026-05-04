@@ -1,0 +1,259 @@
+SQL SELECT TOP, LIMIT and FETCH FIRST
+
+The SELECT TOP clause is used to limit the number of records returned by a query.
+This is useful on large tables when returning all rows would be slow or unnecessary.
+Limiting rows improves performance, reduces network traffic, and makes results more manageable.
+
+SELECT TOP Example (SQL Server / MS Access)
+The following SQL selects only the first 3 records of the Customers table:
+
+Example:
+SELECT TOP 3 *
+FROM Customers;
+
+What this does:
+This returns only the first three rows from the result set.
+Use TOP when you only need a small sample of rows.
+
+Syntax for SQL Server / MS Access
+SELECT TOP number|percent column_name(s)
+FROM table_name
+WHERE condition;
+
+TOP with percent
+Example:
+SELECT TOP 50 PERCENT *
+FROM Customers;
+
+What this does:
+This returns the first 50 percent of rows from the result set.
+Use TOP percent when you want a relative portion of the table.
+
+MySQL - LIMIT Clause
+The LIMIT clause is the MySQL equivalent of TOP.
+
+Example:
+SELECT *
+FROM Customers
+LIMIT 3;
+
+What this does:
+This returns only the first three rows from the Customers table.
+
+Syntax for MySQL
+SELECT column_name(s)
+FROM table_name
+WHERE condition
+LIMIT number;
+
+MySQL with OFFSET
+Example:
+SELECT *
+FROM Customers
+LIMIT 3 OFFSET 2;
+
+What this does:
+This returns three rows starting from the third row in the result set.
+Use LIMIT with OFFSET to page through results.
+
+Oracle 12+ - FETCH FIRST Clause
+Oracle uses FETCH FIRST n ROWS ONLY to limit rows.
+
+Example:
+SELECT *
+FROM Customers
+FETCH FIRST 3 ROWS ONLY;
+
+What this does:
+This returns only the first three rows from the result set.
+
+Syntax for Oracle 12+
+SELECT column_name(s)
+FROM table_name
+ORDER BY column_name(s)
+FETCH FIRST number ROWS ONLY;
+
+Oracle TOP percent example
+Example:
+SELECT *
+FROM Customers
+FETCH FIRST 50 PERCENT ROWS ONLY;
+
+What this does:
+This returns the first half of the rows in the query result.
+
+SELECT TOP with WHERE
+Use WHERE to filter rows before limiting the result.
+
+SQL Server / MS Access example:
+SELECT TOP 3 *
+FROM Customers
+WHERE Country = 'Germany';
+
+MySQL equivalent:
+SELECT *
+FROM Customers
+WHERE Country = 'Germany'
+LIMIT 3;
+
+Oracle equivalent:
+SELECT *
+FROM Customers
+WHERE Country = 'Germany'
+FETCH FIRST 3 ROWS ONLY;
+
+What this does:
+These queries return the first three rows where Country is Germany.
+The WHERE filter is applied before the row limit.
+
+SELECT TOP and ORDER BY
+Use ORDER BY when you want the top rows from a sorted result.
+
+SQL Server / MS Access example:
+SELECT TOP 3 *
+FROM Customers
+ORDER BY CustomerName DESC;
+
+MySQL equivalent:
+SELECT *
+FROM Customers
+ORDER BY CustomerName DESC
+LIMIT 3;
+
+Oracle equivalent:
+SELECT *
+FROM Customers
+ORDER BY CustomerName DESC
+FETCH FIRST 3 ROWS ONLY;
+
+What this does:
+These queries sort customers by name in descending order and return the first three rows from that sorted list.
+
+More examples
+Example: TOP with specific columns (SQL Server / MS Access)
+SELECT TOP 2 CustomerName, City
+FROM Customers
+ORDER BY CustomerName ASC;
+
+Example: LIMIT with WHERE and ORDER BY (MySQL)
+SELECT CustomerName, Country
+FROM Customers
+WHERE Country = 'Mexico'
+ORDER BY CustomerName ASC
+LIMIT 5;
+
+Example: FETCH FIRST with ORDER BY and offset-like paging (Oracle)
+SELECT CustomerName, City
+FROM Customers
+ORDER BY CustomerName ASC
+OFFSET 3 ROWS
+FETCH NEXT 3 ROWS ONLY;
+
+What this does:
+This returns rows 4 through 6 of the sorted result.
+Use OFFSET/FETCH NEXT in Oracle-based paging.
+
+TOP with PERCENT and ORDER BY
+SQL Server / MS Access example:
+SELECT TOP 20 PERCENT *
+FROM Customers
+ORDER BY CustomerName ASC;
+
+Oracle equivalent:
+SELECT *
+FROM Customers
+ORDER BY CustomerName ASC
+FETCH FIRST 20 PERCENT ROWS ONLY;
+
+Difference between LIMIT and FETCH
+- LIMIT is common in MySQL and PostgreSQL.
+- FETCH FIRST is the ANSI SQL / Oracle 12+ style.
+- TOP is used by SQL Server and MS Access.
+
+Key reminders
+- Use TOP or LIMIT when you only need a subset of rows.
+- Always include ORDER BY when you need deterministic results.
+- Without ORDER BY, the returned rows may be arbitrary.
+- For paging, combine LIMIT with OFFSET or FETCH NEXT.
+
+Additional Examples and Patterns
+
+Example: TOP with GROUP BY (SQL Server / MS Access)
+SELECT TOP 5 Country, COUNT(*) AS CustomerCount
+FROM Customers
+GROUP BY Country
+ORDER BY CustomerCount DESC;
+
+What this does:
+This returns the top 5 countries with the most customers, sorted by count descending.
+
+Example: LIMIT with subquery (MySQL)
+SELECT *
+FROM Customers
+WHERE CustomerID IN (
+  SELECT TOP 10 CustomerID
+  FROM Orders
+  ORDER BY OrderDate DESC
+)
+LIMIT 5;
+
+What this does:
+This finds the top 10 most recent orders, then limits the customer details to 5.
+
+Example: FETCH FIRST with window functions (Oracle)
+SELECT CustomerName, City,
+       ROW_NUMBER() OVER (ORDER BY CustomerName) AS RowNum
+FROM Customers
+ORDER BY CustomerName
+FETCH FIRST 10 ROWS ONLY;
+
+What this does:
+This assigns row numbers and returns the first 10 customers alphabetically.
+
+Common Use Cases for TOP/LIMIT/FETCH
+- Pagination: Display results in pages (e.g., LIMIT 10 OFFSET 20 for page 3).
+- Sampling: Get a random sample of data for testing.
+- Ranking: Find top performers (e.g., TOP 10 sales).
+- Performance: Avoid loading large datasets into memory.
+- Reporting: Show summary statistics for top items.
+
+Best Practices
+- Always use ORDER BY with TOP/LIMIT unless order doesn't matter.
+- For large datasets, consider indexing columns used in ORDER BY.
+- Use percent limits carefully as they depend on total row count.
+- Test queries with EXPLAIN to understand performance impact.
+- Combine with WHERE clauses to filter before limiting.
+
+Common Mistakes to Avoid
+- Forgetting ORDER BY, leading to unpredictable results.
+- Using TOP without WHERE on large tables, causing performance issues.
+- Misusing OFFSET without proper indexing.
+- Assuming TOP/LIMIT affects aggregates; it limits rows before aggregation.
+
+Advanced Patterns
+Example: TOP with TIES (SQL Server)
+SELECT TOP 3 WITH TIES CustomerName, Country
+FROM Customers
+ORDER BY Country;
+
+What this does:
+This returns the top 3 rows, plus any additional rows that have the same value as the last row.
+
+Example: LIMIT with UNION (MySQL)
+(SELECT CustomerName FROM Customers LIMIT 2)
+UNION ALL
+(SELECT SupplierName FROM Suppliers LIMIT 2);
+
+What this does:
+This combines limited results from two tables.
+
+Example: FETCH FIRST with PERCENT and ORDER BY (Oracle)
+SELECT *
+FROM Customers
+ORDER BY CustomerName
+FETCH FIRST 25 PERCENT ROWS ONLY;
+
+What this does:
+This returns the first quarter of customers alphabetically.
+
+Use this file as a complete reference for limiting result rows with TOP, LIMIT, and FETCH FIRST.

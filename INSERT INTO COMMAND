@@ -1,0 +1,198 @@
+SQL INSERT INTO Statement
+
+The SQL INSERT INTO statement is used to insert new records into a table.
+It is the most common way to add new rows of data to a database.
+
+INSERT INTO can be written in two main forms:
+
+Syntax 1: Specify column names
+INSERT INTO table_name (column1, column2, column3, ...)
+VALUES (value1, value2, value3, ...);
+
+What this does:
+This inserts a new row using only the listed columns.
+Any columns not specified will use their default values or NULL if allowed.
+When to use it:
+Use this when you want to insert data into specific columns only.
+
+Syntax 2: Insert values for all columns
+INSERT INTO table_name
+VALUES (value1, value2, value3, ...);
+
+What this does:
+This inserts new rows using values for all columns in the table, in the table's defined order.
+When to use it:
+Use this when you are providing a complete row and know the correct column order.
+
+Demo Data
+Below is a selection from the Customers table used in the examples.
+
+CustomerID  CustomerName               ContactName       Address                         City        PostalCode  Country
+89          White Clover Markets        Karl Jablonski    305 - 14th Ave. S. Suite 3B   Seattle     98128       USA
+90          Wilman Kala                 Matti Karttunen   Keskuskatu 45                  Helsinki    21240       Finland
+91          Wolski                      Zbyszek           ul. Filtrowa 68                Walla       01-012      Poland
+
+INSERT INTO Example: Insert values for all columns
+Here we insert values for ALL the columns of the table, so we omit the column names.
+Example:
+INSERT INTO Customers
+VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
+
+What this does:
+This query adds a new row to the Customers table.
+Because CustomerID is an auto-increment field, the database generates the next CustomerID automatically.
+When to use it:
+Use this when you are inserting a complete record and the table will fill any auto-generated columns.
+
+Result after inserting this row:
+CustomerID  CustomerName  ContactName       Address      City       PostalCode  Country
+92          Cardinal      Tom B. Erichsen  Skagen 21    Stavanger  4006        Norway
+
+Important note:
+In this example we did not include CustomerID in the VALUES list.
+That is valid if CustomerID is defined as an auto-increment column.
+
+Insert Data Only in Specific Columns
+Sometimes you only want to insert values into a subset of columns.
+Example:
+INSERT INTO Customers (CustomerName, City, Country)
+VALUES ('Cardinal', 'Stavanger', 'Norway');
+
+What this does:
+This query inserts a new row with values for CustomerName, City, and Country only.
+Other columns such as ContactName, Address, and PostalCode will be set to NULL or default values.
+When to use it:
+Use this when you do not have values for every column and want to insert partial data.
+
+Result after inserting this row:
+CustomerID  CustomerName  ContactName  Address  City       PostalCode  Country
+92          Cardinal      NULL         NULL     Stavanger  NULL        Norway
+
+Tips for inserting specific columns:
+- Always list the column names in the same order as the values.
+- Do not include columns if you want the database to fill them automatically.
+
+Insert Multiple Rows
+To insert more than one row in a single statement, provide multiple value sets separated by commas.
+Example:
+INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES
+('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway'),
+('Greasy Burger', 'Per Olsen', 'Gateveien 15', 'Sandnes', '4306', 'Norway'),
+('Tasty Tee', 'Finn Egan', 'Streetroad 19B', 'Liverpool', 'L1 0AA', 'UK');
+
+What this does:
+This query inserts three new rows into the Customers table in one statement.
+When to use it:
+Use this to add multiple rows efficiently and reduce the number of separate SQL commands.
+
+Important note:
+Make sure each row of values is separated by a comma, and the last row ends with a semicolon.
+
+Result after inserting these rows:
+CustomerID  CustomerName   ContactName       Address           City       PostalCode  Country
+92          Cardinal       Tom B. Erichsen  Skagen 21         Stavanger  4006        Norway
+93          Greasy Burger  Per Olsen         Gateveien 15      Sandnes    4306        Norway
+94          Tasty Tee      Finn Egan         Streetroad 19B    Liverpool  L1 0AA      UK
+
+Other useful INSERT INTO patterns
+Insert a row with explicit NULL values:
+INSERT INTO Customers (CustomerName, ContactName, City, Country)
+VALUES ('Cardinal', NULL, 'Stavanger', 'Norway');
+
+Insert a row using default values for some columns (if supported):
+INSERT INTO Customers (CustomerName, City, Country)
+VALUES ('Cardinal', 'Stavanger', 'Norway');
+
+Insert a row using a SELECT query from another table:
+INSERT INTO Customers (CustomerName, ContactName, City, Country)
+SELECT SupplierName, ContactName, City, Country
+FROM Suppliers
+WHERE Country = 'Norway';
+
+What this does:
+This inserts new rows into one table using data selected from another table.
+When to use it:
+Use this when migrating or copying data between tables.
+
+Common mistakes to avoid:
+- Do not omit column names when inserting into a subset of columns.
+- Do not provide values in the wrong order.
+- Do not forget commas between value sets in multi-row inserts.
+- Do not use quotes around numeric values unless the column is text.
+- Do not insert into auto-increment columns unless you intentionally want to override the value.
+
+Additional Examples and Patterns
+
+Example: Insert with explicit column order
+INSERT INTO Customers (Country, City, CustomerName)
+VALUES ('Norway', 'Oslo', 'Nordic Supplies');
+
+What this does:
+This inserts a row specifying columns in a different order than the table definition.
+
+Example: Insert with calculated values
+INSERT INTO Orders (CustomerID, OrderDate, TotalAmount)
+VALUES (1, GETDATE(), 100.50);
+
+What this does:
+This inserts an order with the current date using a function.
+
+Example: Insert with subquery in VALUES
+INSERT INTO Customers (CustomerName, City, Country)
+VALUES ('New Customer', (SELECT City FROM Cities WHERE CityID = 1), 'USA');
+
+What this does:
+This uses a subquery to get the city value from another table.
+
+Example: Insert with ON DUPLICATE KEY UPDATE (MySQL)
+INSERT INTO Customers (CustomerID, CustomerName)
+VALUES (1, 'Updated Name')
+ON DUPLICATE KEY UPDATE CustomerName = 'Updated Name';
+
+What this does:
+This inserts a new row or updates an existing one if the key already exists.
+
+Example: Insert with RETURNING (PostgreSQL)
+INSERT INTO Customers (CustomerName, City)
+VALUES ('New Cust', 'NYC')
+RETURNING CustomerID;
+
+What this does:
+This inserts a row and returns the generated CustomerID.
+
+Example: Bulk insert from CSV-like data
+INSERT INTO Customers (CustomerName, City, Country)
+VALUES
+('Cust1', 'City1', 'Country1'),
+('Cust2', 'City2', 'Country2'),
+('Cust3', 'City3', 'Country3');
+
+What this does:
+This inserts multiple rows in one statement for bulk loading.
+
+Example: Insert with IDENTITY INSERT (SQL Server)
+SET IDENTITY_INSERT Customers ON;
+INSERT INTO Customers (CustomerID, CustomerName)
+VALUES (1000, 'Special Customer');
+SET IDENTITY_INSERT Customers OFF;
+
+What this does:
+This allows inserting explicit values into an identity column.
+
+Best Practices for INSERT
+- Use column lists to avoid dependency on table order.
+- Validate data types and constraints before inserting.
+- Use transactions for multiple inserts: BEGIN TRANSACTION; INSERT...; COMMIT;
+- For large inserts, consider bulk insert methods.
+- Handle auto-increment fields appropriately.
+- Use parameterized queries to prevent SQL injection.
+
+Common INSERT Scenarios
+- Adding new customer records.
+- Importing data from external sources.
+- Creating test data.
+- Migrating data between tables.
+- Populating lookup tables.
+
+Use this file as a complete reference for INSERT INTO statements and all common insert patterns.

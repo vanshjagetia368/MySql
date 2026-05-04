@@ -1,0 +1,220 @@
+SQL DELETE Statement
+
+The SQL DELETE statement is used to delete existing records in a table.
+
+DELETE Syntax
+DELETE FROM table_name
+WHERE condition;
+
+Note: Be careful when deleting records in a table! The WHERE clause specifies which record(s) should be deleted. If you omit the WHERE clause, all records in the table will be deleted!
+
+Demo Database
+Below is a selection from the Customers table used in the examples:
+
+CustomerID  CustomerName                          ContactName      Address                      City        PostalCode  Country
+1           Alfreds Futterkiste                   Maria Anders     Obere Str. 57               Berlin      12209       Germany
+2           Ana Trujillo Emparedados y helados    Ana Trujillo     Avda. de la Constitución 2222  México D.F. 05021       Mexico
+3           Antonio Moreno Taquería               Antonio Moreno   Mataderos 2312             México D.F. 05023       Mexico
+4           Around the Horn                       Thomas Hardy     120 Hanover Sq.             London      WA1 1DP     UK
+5           Berglunds snabbköp                    Christina Berglund Berguvsvägen 8           Luleå       S-958 22    Sweden
+
+SQL DELETE Example
+The following SQL deletes the customer "Alfreds Futterkiste" from the Customers table.
+
+Example:
+DELETE FROM Customers
+WHERE CustomerName = 'Alfreds Futterkiste';
+
+What this does:
+This query deletes only the row where the CustomerName value exactly matches 'Alfreds Futterkiste'.
+The table structure remains intact, and only the matching record is removed.
+
+Result after delete:
+CustomerID  CustomerName                          ContactName      Address                      City        PostalCode  Country
+2           Ana Trujillo Emparedados y helados    Ana Trujillo     Avda. de la Constitución 2222  México D.F. 05021       Mexico
+3           Antonio Moreno Taquería               Antonio Moreno   Mataderos 2312             México D.F. 05023       Mexico
+4           Around the Horn                       Thomas Hardy     120 Hanover Sq.             London      WA1 1DP     UK
+5           Berglunds snabbköp                    Christina Berglund Berguvsvägen 8           Luleå       S-958 22    Sweden
+
+Delete Multiple Records
+Use a WHERE clause that matches more than one row to delete many records at once.
+
+Example:
+DELETE FROM Customers
+WHERE Country = 'Mexico';
+
+What this does:
+This query deletes all rows in the Customers table where the Country value is Mexico.
+
+Result after delete:
+CustomerID  CustomerName                          ContactName      Address                      City        PostalCode  Country
+1           Alfreds Futterkiste                   Maria Anders     Obere Str. 57               Berlin      12209       Germany
+4           Around the Horn                       Thomas Hardy     120 Hanover Sq.             London      WA1 1DP     UK
+5           Berglunds snabbköp                    Christina Berglund Berguvsvägen 8           Luleå       S-958 22    Sweden
+
+DELETE warning!
+Be careful when deleting records. If you omit the WHERE clause, ALL rows in the table will be deleted!
+
+Example: Delete all records from the table
+DELETE FROM Customers;
+
+What this does:
+This query removes every row from the Customers table.
+The table itself remains, but it becomes empty.
+
+Result after delete:
+CustomerID  CustomerName  ContactName  Address  City  PostalCode  Country
+(no rows)
+
+Delete rows with NULL values
+Delete records where a column is NULL.
+
+Example:
+DELETE FROM Customers
+WHERE Address IS NULL;
+
+What this does:
+This query deletes any rows where the Address field contains a NULL value.
+
+Delete rows using multiple conditions
+Example:
+DELETE FROM Customers
+WHERE Country = 'UK'
+  AND City = 'London';
+
+What this does:
+This query deletes only those rows where Country is UK and City is London.
+Combine conditions with AND and OR to precisely target rows.
+
+Delete rows using LIKE patterns
+Example:
+DELETE FROM Customers
+WHERE CustomerName LIKE '%shop%';
+
+What this does:
+This query deletes rows where CustomerName contains the text 'shop'.
+The LIKE operator is useful when you need pattern matching.
+
+Delete rows using a subquery
+Example:
+DELETE FROM Customers
+WHERE Country IN (
+  SELECT Country
+  FROM CountriesToRemove
+);
+
+What this does:
+This query deletes rows based on a list of values returned by another query.
+Use subqueries when delete targets depend on data from another table.
+
+Delete based on join condition (MySQL syntax)
+Example:
+DELETE C
+FROM Customers C
+JOIN Orders O ON C.CustomerID = O.CustomerID
+WHERE O.OrderDate < '2018-01-01';
+
+What this does:
+This query deletes customers who have orders older than January 1, 2018.
+A join allows delete actions based on related table data.
+
+Delete and preserve table structure
+Remember that DELETE removes rows but keeps the table and indexes.
+If you want to remove the table completely, use DROP TABLE instead.
+
+Example: Drop the table entirely
+DROP TABLE Customers;
+
+What this does:
+This command deletes the whole table structure, including all rows, columns, indexes, and constraints.
+
+Best practices for DELETE
+- Always run a SELECT query first with the same WHERE clause to verify which rows will be deleted.
+- Use transactions for large deletes: START TRANSACTION; DELETE ...; COMMIT;
+- Backup your data before performing destructive operations.
+- Avoid DELETE without WHERE unless you intentionally want to clear the table.
+- Use precise conditions to avoid accidental data loss.
+- Consider using a soft delete column (e.g. IsDeleted) if you need recoverability.
+
+Common DELETE scenarios
+- Delete a single record by primary key.
+- Delete multiple related records by condition.
+- Delete rows with missing or invalid data.
+- Delete old records by date.
+- Delete records that match a lookup table or subquery.
+
+Additional Examples and Patterns
+
+Example: Delete with EXISTS subquery
+DELETE FROM Customers
+WHERE EXISTS (
+  SELECT 1
+  FROM Orders
+  WHERE Orders.CustomerID = Customers.CustomerID
+    AND Orders.Status = 'Cancelled'
+);
+
+What this does:
+This deletes customers who have cancelled orders.
+Use EXISTS for correlated subqueries.
+
+Example: Delete using BETWEEN
+DELETE FROM Customers
+WHERE CustomerID BETWEEN 10 AND 20;
+
+What this does:
+This deletes customers with IDs from 10 to 20 inclusive.
+
+Example: Delete with CASE in WHERE (advanced)
+DELETE FROM Customers
+WHERE CASE
+  WHEN Country = 'Germany' THEN 1
+  WHEN Country = 'France' THEN 1
+  ELSE 0
+END = 1;
+
+What this does:
+This deletes customers from Germany or France using a CASE expression.
+
+Example: Delete duplicates (keeping one)
+DELETE C1
+FROM Customers C1
+JOIN Customers C2 ON C1.CustomerName = C2.CustomerName
+  AND C1.CustomerID > C2.CustomerID;
+
+What this does:
+This deletes duplicate customer names, keeping the one with the lowest CustomerID.
+
+Example: Delete with window function (SQL Server 2012+)
+WITH CTE AS (
+  SELECT *,
+         ROW_NUMBER() OVER (PARTITION BY CustomerName ORDER BY CustomerID) AS rn
+  FROM Customers
+)
+DELETE FROM CTE
+WHERE rn > 1;
+
+What this does:
+This deletes duplicate names using a common table expression with ROW_NUMBER.
+
+Example: Delete old data by date
+DELETE FROM Orders
+WHERE OrderDate < DATEADD(YEAR, -5, GETDATE());
+
+What this does:
+This deletes orders older than 5 years (SQL Server syntax).
+
+Common Mistakes to Avoid
+- Forgetting the WHERE clause, deleting all rows.
+- Using wrong join conditions, deleting unintended rows.
+- Not using transactions for multi-table deletes.
+- Deleting from tables with foreign key constraints without handling dependencies.
+- Using DELETE on large tables without proper indexing.
+
+Performance Considerations
+- Use indexes on columns in WHERE clauses.
+- For large deletes, consider batching: DELETE TOP 1000 ... in a loop.
+- Use TRUNCATE TABLE for deleting all rows (faster, but no WHERE).
+- Monitor transaction log growth during large deletes.
+
+Use this file as a detailed DELETE statement reference and for safe delete patterns.

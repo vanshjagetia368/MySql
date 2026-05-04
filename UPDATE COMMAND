@@ -1,0 +1,234 @@
+SQL UPDATE Statement
+
+The SQL UPDATE statement is used to update or modify one or more records in a table.
+
+UPDATE Syntax
+UPDATE table_name
+SET column1 = value1, column2 = value2, ...
+WHERE condition;
+
+Note: Be careful when updating records in a table! The WHERE clause specifies which record(s) should be updated. If you omit the WHERE clause, all records in the table will be updated.
+
+Demo Database
+Below is a selection from the Customers table used in the examples:
+
+CustomerID  CustomerName                          ContactName      Address                      City        PostalCode  Country
+1           Alfreds Futterkiste                   Maria Anders     Obere Str. 57               Berlin      12209       Germany
+2           Ana Trujillo Emparedados y helados    Ana Trujillo     Avda. de la Constitución 2222  México D.F. 05021       Mexico
+3           Antonio Moreno Taquería               Antonio Moreno   Mataderos 2312             México D.F. 05023       Mexico
+4           Around the Horn                       Thomas Hardy     120 Hanover Sq.             London      WA1 1DP     UK
+5           Berglunds snabbköp                    Christina Berglund Berguvsvägen 8           Luleå       S-958 22    Sweden
+
+UPDATE Single Record
+The following SQL updates the record with CustomerID = 1, changing both ContactName and City.
+
+Example:
+UPDATE Customers
+SET ContactName = 'Alfred Schmidt', City = 'Frankfurt'
+WHERE CustomerID = 1;
+
+What this does:
+This query changes the ContactName and City fields for the row where CustomerID equals 1.
+It updates only that single record because the WHERE clause matches one row.
+
+Result after update:
+CustomerID  CustomerName        ContactName      Address         City       PostalCode  Country
+1           Alfreds Futterkiste Alfred Schmidt   Obere Str. 57   Frankfurt  12209       Germany
+2           Ana Trujillo...     Ana Trujillo     Avda. de la Constitución 2222  México D.F. 05021  Mexico
+3           Antonio Moreno...  Antonio Moreno   Mataderos 2312  México D.F. 05023  Mexico
+4           Around the Horn     Thomas Hardy     120 Hanover Sq.  London     WA1 1DP      UK
+5           Berglunds snabbköp  Christina Berglund Berguvsvägen 8  Luleå      S-958 22    Sweden
+
+UPDATE Multiple Records
+The WHERE clause determines which records will be updated.
+The following SQL updates ContactName to 'Juan' for all rows where Country is 'Mexico'.
+
+Example:
+UPDATE Customers
+SET ContactName = 'Juan'
+WHERE Country = 'Mexico';
+
+What this does:
+This query updates every row where Country is Mexico.
+Any matching row receives the new ContactName value.
+
+Result after update:
+CustomerID  CustomerName                          ContactName  Address                      City        PostalCode  Country
+1           Alfreds Futterkiste                   Alfred Schmidt Obl...                    Frankfurt  12209       Germany
+2           Ana Trujillo Emparedados y helados    Juan          Avda. de la Constitución 2222  México D.F. 05021  Mexico
+3           Antonio Moreno Taquería               Juan          Mataderos 2312             México D.F. 05023  Mexico
+4           Around the Horn                       Thomas Hardy  120 Hanover Sq.             London      WA1 1DP     UK
+5           Berglunds snabbköp                    Christina Berglund Berguvsvägen 8           Luleå       S-958 22    Sweden
+
+UPDATE Warning!
+Be careful when updating records. If you omit the WHERE clause, ALL records in the table will be updated!
+
+Example: Update all records
+UPDATE Customers
+SET ContactName = 'Juan';
+
+What this does:
+This query changes the ContactName field for every row in the Customers table.
+Because there is no WHERE clause, no rows are excluded.
+
+Result after update:
+CustomerID  CustomerName                          ContactName  Address                      City        PostalCode  Country
+1           Alfreds Futterkiste                   Juan          Obere Str. 57               Frankfurt   12209       Germany
+2           Ana Trujillo Emparedados y helados    Juan          Avda. de la Constitución 2222  México D.F. 05021  Mexico
+3           Antonio Moreno Taquería               Juan          Mataderos 2312             México D.F. 05023  Mexico
+4           Around the Horn                       Juan          120 Hanover Sq.             London      WA1 1DP     UK
+5           Berglunds snabbköp                    Juan          Berguvsvägen 8             Luleå       S-958 22    Sweden
+
+Update with multiple columns
+Example:
+UPDATE Customers
+SET ContactName = 'Anna Svensson', City = 'Stockholm', PostalCode = '111 22'
+WHERE CustomerID = 5;
+
+What this does:
+This query updates three columns in a single row.
+Use comma-separated column assignments in the SET clause.
+
+Update with NULL values
+Example:
+UPDATE Customers
+SET Address = NULL
+WHERE CustomerID = 7;
+
+What this does:
+This query clears the Address field for CustomerID 7 by setting it to NULL.
+Use NULL when the value should be removed or the data is missing.
+
+Update using a condition on multiple columns
+Example:
+UPDATE Customers
+SET City = 'Stockholm'
+WHERE Country = 'Sweden'
+  AND City <> 'Stockholm';
+
+What this does:
+This query updates only Swedish customers whose City is not already Stockholm.
+Multiple conditions can be combined using AND and OR.
+
+Update based on another table
+Example:
+UPDATE Customers C
+JOIN Cities X ON C.City = X.CityName
+SET C.PostalCode = X.Postcode
+WHERE C.Country = 'UK';
+
+What this does:
+This query updates values in Customers using related data from another table.
+It is useful when data must be synchronized across tables.
+
+Using a subquery in SET
+Example:
+UPDATE Customers
+SET PostalCode = (
+  SELECT DefaultPostalCode
+  FROM CountryDefaults
+  WHERE CountryDefaults.Country = Customers.Country
+)
+WHERE PostalCode IS NULL;
+
+What this does:
+This query fills missing PostalCode values using a lookup table.
+Use subqueries when the new value depends on another table.
+
+Best practices for UPDATE
+- Always test your WHERE clause with SELECT first.
+- Back up data before running wide updates.
+- Use a transaction when updating many rows: START TRANSACTION ... COMMIT.
+- Include only the columns you need to change in SET.
+- Avoid updating all rows unless that is your explicit goal.
+- Use WHERE conditions carefully to target the correct records.
+
+Common UPDATE scenarios
+- Change a single field in one record.
+- Correct data for many rows that match a condition.
+- Clear field values by setting them to NULL.
+- Synchronize columns across related tables.
+- Update only records that match multiple conditions.
+
+Additional Examples and Patterns
+
+Example: Update with arithmetic operations
+UPDATE Products
+SET Price = Price * 1.10
+WHERE Category = 'Electronics';
+
+What this does:
+This increases prices by 10% for all electronics.
+
+Example: Update with CASE expression
+UPDATE Customers
+SET Country = CASE
+  WHEN Country = 'UK' THEN 'United Kingdom'
+  WHEN Country = 'USA' THEN 'United States'
+  ELSE Country
+END;
+
+What this does:
+This standardizes country names using conditional logic.
+
+Example: Update with window function (SQL Server 2012+)
+WITH CTE AS (
+  SELECT *,
+         ROW_NUMBER() OVER (ORDER BY CustomerID) AS rn
+  FROM Customers
+)
+UPDATE CTE
+SET ContactName = 'Updated ' + ContactName
+WHERE rn <= 5;
+
+What this does:
+This updates the first 5 customers using a common table expression.
+
+Example: Update with EXISTS
+UPDATE Customers
+SET Status = 'Active'
+WHERE EXISTS (
+  SELECT 1
+  FROM Orders
+  WHERE Orders.CustomerID = Customers.CustomerID
+    AND Orders.OrderDate > '2023-01-01'
+);
+
+What this does:
+This marks customers as active if they have recent orders.
+
+Example: Update with JOIN and aggregate
+UPDATE Products P
+JOIN (
+  SELECT ProductID, AVG(Price) AS AvgPrice
+  FROM Sales
+  GROUP BY ProductID
+) S ON P.ProductID = S.ProductID
+SET P.AvgSalePrice = S.AvgPrice;
+
+What this does:
+This updates products with their average sale price from another table.
+
+Example: Update with LIMIT (MySQL)
+UPDATE Customers
+SET ContactName = 'Limited Update'
+WHERE Country = 'Germany'
+LIMIT 3;
+
+What this does:
+This updates only the first 3 German customers.
+
+Common Mistakes to Avoid
+- Forgetting WHERE clause, updating all rows.
+- Using wrong column names in SET.
+- Not handling NULL values properly.
+- Updating auto-increment or computed columns.
+- Ignoring foreign key constraints.
+
+Performance Tips
+- Use indexes on WHERE clause columns.
+- Avoid updating clustered index keys.
+- Batch large updates to prevent log growth.
+- Use minimal logging options when appropriate.
+
+Use this file as a complete reference for UPDATE statements and update patterns.

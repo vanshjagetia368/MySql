@@ -1,0 +1,165 @@
+SQL NULL Values
+
+What is a NULL Value?
+If a field in a table is optional, it is possible to insert or update a record without adding any value to this field. This way, the field will be saved with a NULL value.
+
+A NULL value represents an unknown, missing, or inapplicable data in a database field. It is not a value itself, but a placeholder to indicate the absence of data.
+
+Note: A NULL value is different from zero (0) or an empty string (''). A field with a NULL value is one that has been left blank upon record creation.
+
+How to Test for NULL Values?
+It is not possible to test for NULL values with comparison operators, such as =, <, or <>.
+
+We will have to use the IS NULL and IS NOT NULL operators instead.
+
+IS NULL Syntax
+SELECT column_names
+FROM table_name
+WHERE column_name IS NULL;
+
+IS NOT NULL Syntax
+SELECT column_names
+FROM table_name
+WHERE column_name IS NOT NULL;
+
+Demo Database
+Below is a selection from the Customers table used in the examples:
+
+CustomerID  CustomerName                          ContactName      Address                      City        PostalCode  Country
+1           Alfreds Futterkiste                   Maria Anders     Obere Str. 57               Berlin      12209       Germany
+2           Ana Trujillo Emparedados y helados    Ana Trujillo     Avda. de la Constitución 2222  México D.F. 05021       Mexico
+3           Antonio Moreno Taquería               Antonio Moreno   Mataderos 2312             México D.F. 05023       Mexico
+4           Around the Horn                       Thomas Hardy     120 Hanover Sq.             London      WA1 1DP     UK
+5           Berglunds snabbköp                    Christina Berglund Berguvsvägen 8           Luleå       S-958 22    Sweden
+6           The Big Cheese                        Liz Nixon        89 Main St.                 London      W1A 1AA     UK
+7           Quick Stop                            Tom Bedford      NULL                        Dublin      D02 1234    Ireland
+8           Fresh Greens                         Anna Holm        NULL                        Stockholm   10234       Sweden
+
+The IS NULL Operator
+The IS NULL operator is used to test for empty values (NULL values).
+
+Example: Find rows where Address is NULL
+SELECT CustomerName, ContactName, Address
+FROM Customers
+WHERE Address IS NULL;
+
+What this does:
+This query returns all customers that currently have no value stored in the Address field.
+It is searching for the absence of data, not for an empty string or zero.
+
+When to use it:
+Use IS NULL when you need to locate rows with missing or undefined values.
+
+Result example:
+CustomerName      ContactName   Address
+Quick Stop        Tom Bedford   NULL
+Fresh Greens      Anna Holm     NULL
+
+Example: Find rows where PostalCode is NULL
+SELECT CustomerID, CustomerName, City, PostalCode
+FROM Customers
+WHERE PostalCode IS NULL;
+
+What this does:
+This query returns customers where PostalCode has not been provided.
+
+Example: Find rows where ContactName is NULL
+SELECT CustomerID, CustomerName, ContactName
+FROM Customers
+WHERE ContactName IS NULL;
+
+What this does:
+This query returns rows where ContactName is missing or was intentionally left blank.
+
+The IS NOT NULL Operator
+The IS NOT NULL operator is used to test for non-empty values (NOT NULL values).
+
+Example: Find rows where Address is NOT NULL
+SELECT CustomerName, ContactName, Address
+FROM Customers
+WHERE Address IS NOT NULL;
+
+What this does:
+This query returns all customers whose Address field contains a real value.
+
+When to use it:
+Use IS NOT NULL when you want to find rows that have valid data in a field.
+
+Result example:
+CustomerName                ContactName       Address
+Alfreds Futterkiste         Maria Anders      Obere Str. 57
+Ana Trujillo Emparedados...  Ana Trujillo      Avda. de la Constitución 2222
+Antonio Moreno Taquería     Antonio Moreno    Mataderos 2312
+Around the Horn             Thomas Hardy      120 Hanover Sq.
+Berglunds snabbköp          Christina Berglund Berguvsvägen 8
+The Big Cheese              Liz Nixon         89 Main St.
+
+Example: Find rows where Country is NOT NULL
+SELECT CustomerID, CustomerName, Country
+FROM Customers
+WHERE Country IS NOT NULL;
+
+What this does:
+This query returns all rows where the Country field is populated.
+
+Comparison operators cannot test for NULL
+The following examples are incorrect and will not return the expected NULL matches:
+
+SELECT CustomerName
+FROM Customers
+WHERE Address = NULL;
+
+SELECT CustomerName
+FROM Customers
+WHERE Address <> NULL;
+
+Why these are wrong:
+NULL is not a value and therefore cannot be compared using =, <>, <, or >.
+Always use IS NULL or IS NOT NULL instead.
+
+Combined NULL conditions
+Example: Find customers with a NULL Address but a known Country
+SELECT CustomerName, Address, Country
+FROM Customers
+WHERE Address IS NULL
+  AND Country IS NOT NULL;
+
+What this does:
+This query finds records where Address is missing but Country has been provided.
+
+Example: Find rows where Address is NULL or PostalCode is NULL
+SELECT CustomerName, Address, PostalCode
+FROM Customers
+WHERE Address IS NULL
+   OR PostalCode IS NULL;
+
+What this does:
+This query returns rows where either Address or PostalCode is missing.
+
+Example: Find rows where Address is NOT NULL and City is NOT NULL
+SELECT CustomerName, Address, City
+FROM Customers
+WHERE Address IS NOT NULL
+  AND City IS NOT NULL;
+
+What this does:
+This query finds rows where both Address and City contain valid values.
+
+Common NULL-use cases
+- Optional fields: store NULL when a value is unavailable or not applicable.
+- Missing data: record that a field was intentionally left blank.
+- Outer joins: use IS NULL to find rows that have no matching related record.
+- Data cleanup: identify NULL values before replacing them with default data.
+
+What is a NULL value in SQL?
+A field with no value
+A field with a zero value       <-- incorrect
+A field containing spaces       <-- incorrect
+A field that has been deleted   <-- incorrect
+
+Key reminder:
+- NULL means unknown, missing, or not provided.
+- NULL is not the same as 0 or an empty string ('').
+- Use IS NULL and IS NOT NULL to test for NULL values.
+
+Use this file as a complete reference for testing NULL values in SQL.
