@@ -1,0 +1,258 @@
+# MySQL COUNT() Function
+
+## Overview
+The COUNT() function is an aggregate function in MySQL that returns the number of rows that match a specified criterion. It can count all rows, non-null values in a column, or distinct values.
+
+## Syntax
+```sql
+SELECT COUNT([DISTINCT] column_name | *)
+FROM table_name
+[WHERE condition]
+[GROUP BY column_name]
+[HAVING condition]
+[ORDER BY column_name];
+```
+
+### Parameters
+- `column_name`: The column to count (non-null values)
+- `*`: Counts all rows including NULL values
+- `DISTINCT column_name`: Counts only unique, non-null values
+
+### Return Value
+- Returns the number of rows as an integer (BIGINT)
+- COUNT(*) includes NULL values in the count
+- COUNT(column) excludes NULL values
+- COUNT(DISTINCT column) counts unique non-null values
+
+### Behavior Details
+- **COUNT(*)**: Counts the total number of rows in a table (including NULL values)
+- **COUNT(column_name)**: Counts all non-null values in the specified column
+- **COUNT(DISTINCT column_name)**: Counts only the unique, non-null values in the column
+
+## Examples
+
+### Demo Database
+We'll use the Northwind sample database for our examples. Below is a selection from the "Products" table:
+
+| ProductID | ProductName | SupplierID | CategoryID | Unit | Price |
+|-----------|-------------|------------|------------|------|-------|
+| 1 | Chais | 1 | 1 | 10 boxes x 20 bags | 18.00 |
+| 2 | Chang | 1 | 1 | 24 - 12 oz bottles | 19.00 |
+| 3 | Aniseed Syrup | 1 | 2 | 12 - 550 ml bottles | 10.00 |
+| 4 | Chef Anton's Cajun Seasoning | 2 | 2 | 48 - 6 oz jars | 22.00 |
+| 5 | Chef Anton's Gumbo Mix | 2 | 2 | 36 boxes | 21.35 |
+
+### Using COUNT(*)
+Count the total number of rows in the Products table (includes NULL values):
+
+```sql
+SELECT COUNT(*)
+FROM Products;
+```
+
+**Result:**
+```
+COUNT(*)
+5
+```
+
+### Using COUNT(column_name)
+Count all non-null values in the ProductID column:
+
+```sql
+SELECT COUNT(ProductID)
+FROM Products;
+```
+
+**Result:**
+```
+COUNT(ProductID)
+5
+```
+
+### Using COUNT(DISTINCT column_name)
+Count the unique, non-null values in the Price column:
+
+```sql
+SELECT COUNT(DISTINCT Price)
+FROM Products;
+```
+
+**Result:**
+```
+COUNT(DISTINCT Price)
+5
+```
+
+### COUNT() with WHERE Clause
+Count the number of products where Price is higher than 20:
+
+```sql
+SELECT COUNT(ProductID)
+FROM Products
+WHERE Price > 20;
+```
+
+**Result:**
+```
+COUNT(ProductID)
+2
+```
+
+### COUNT() with GROUP BY
+Count products by category:
+
+```sql
+SELECT CategoryID, COUNT(*) AS ProductCount
+FROM Products
+GROUP BY CategoryID;
+```
+
+**Result:**
+```
+CategoryID | ProductCount
+1          | 2
+2          | 3
+```
+
+### COUNT() with Multiple Columns
+You can use COUNT() on multiple columns in the same query:
+
+```sql
+SELECT 
+    COUNT(*) AS TotalProducts,
+    COUNT(DISTINCT CategoryID) AS UniqueCategories,
+    COUNT(DISTINCT SupplierID) AS UniqueSuppliers
+FROM Products;
+```
+
+### COUNT() with NULL Values
+Demonstrating how COUNT() handles NULL values:
+
+```sql
+-- Assuming some products have NULL prices
+SELECT 
+    COUNT(*) AS TotalRows,
+    COUNT(Price) AS NonNullPrices,
+    COUNT(DISTINCT Price) AS DistinctPrices
+FROM Products;
+```
+
+### COUNT() with HAVING Clause
+Find categories with more than 2 products:
+
+```sql
+SELECT CategoryID, COUNT(*) AS ProductCount
+FROM Products
+GROUP BY CategoryID
+HAVING COUNT(*) > 2;
+```
+
+### Advanced COUNT() Examples
+
+#### COUNT() with Subqueries
+```sql
+SELECT SupplierID, COUNT(*) AS ProductCount
+FROM Products
+WHERE SupplierID IN (
+    SELECT SupplierID 
+    FROM Products 
+    GROUP BY SupplierID 
+    HAVING COUNT(*) > 1
+);
+```
+
+#### COUNT() with CASE Statement
+```sql
+SELECT 
+    COUNT(CASE WHEN Price > 20 THEN 1 END) AS ExpensiveProducts,
+    COUNT(CASE WHEN Price <= 20 THEN 1 END) AS AffordableProducts
+FROM Products;
+```
+
+#### COUNT() with Window Functions (MySQL 8.0+)
+```sql
+SELECT 
+    ProductName,
+    CategoryID,
+    COUNT(*) OVER (PARTITION BY CategoryID) AS ProductsInCategory
+FROM Products;
+```
+
+### COUNT() vs Other Aggregate Functions
+- **COUNT()**: Returns the number of rows/values
+- **SUM()**: Returns the sum of values
+- **AVG()**: Returns the average value
+- **MIN()**: Returns the smallest value
+- **MAX()**: Returns the largest value
+
+### Performance Considerations
+- COUNT(*) is generally fast as it doesn't need to evaluate expressions
+- COUNT(column) may be slower if the column contains NULLs
+- COUNT(DISTINCT) can be expensive on large datasets
+- Indexes don't directly help COUNT() performance
+- For approximate counts on large tables, consider using information_schema
+
+### Common Use Cases
+1. Counting total records in a table
+2. Counting records matching specific criteria
+3. Finding unique values in a column
+4. Analyzing data distribution by categories
+5. Checking for data completeness (non-null counts)
+6. Generating summary statistics
+
+### Tips
+- Use COUNT(*) for counting rows regardless of NULL values
+- Use COUNT(column) when you want to exclude NULLs
+- Use COUNT(DISTINCT) for unique value counts
+- Combine with GROUP BY for grouped counts
+- Use aliases with AS for better readability
+
+### Error Handling
+- If the table doesn't exist, MySQL will return an error
+- If no rows match the WHERE condition, COUNT() returns 0
+- COUNT() never returns NULL (returns 0 for empty result sets)
+
+### Practical Examples
+
+#### Counting Active Users
+```sql
+SELECT COUNT(*) AS ActiveUsers
+FROM Users
+WHERE LastLogin > DATE_SUB(NOW(), INTERVAL 30 DAY);
+```
+
+#### Counting Orders by Status
+```sql
+SELECT 
+    Status,
+    COUNT(*) AS OrderCount
+FROM Orders
+GROUP BY Status;
+```
+
+#### Counting Unique Customers
+```sql
+SELECT COUNT(DISTINCT CustomerID) AS UniqueCustomers
+FROM Orders;
+```
+
+#### Counting Products by Price Range
+```sql
+SELECT 
+    CASE 
+        WHEN Price < 10 THEN 'Under $10'
+        WHEN Price BETWEEN 10 AND 20 THEN '$10-$20'
+        ELSE 'Over $20'
+    END AS PriceRange,
+    COUNT(*) AS ProductCount
+FROM Products
+GROUP BY 
+    CASE 
+        WHEN Price < 10 THEN 'Under $10'
+        WHEN Price BETWEEN 10 AND 20 THEN '$10-$20'
+        ELSE 'Over $20'
+    END;
+```
+
+This comprehensive guide covers the MySQL COUNT() function with various examples and use cases. The COUNT() function is essential for data analysis, reporting, and understanding dataset characteristics in MySQL databases.

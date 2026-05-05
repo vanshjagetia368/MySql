@@ -1,0 +1,252 @@
+# MySQL AVG() Function
+
+## Overview
+The AVG() function in MySQL is an aggregate function that calculates the average value of a numeric column. It returns the arithmetic mean of all non-NULL values in the specified column.
+
+### Key Characteristics
+- **Aggregate Function**: Operates on a set of values and returns a single value
+- **NULL Handling**: Automatically ignores NULL values in calculations
+- **Data Types**: Works with numeric data types (INT, DECIMAL, FLOAT, DOUBLE, etc.)
+- **Precision**: Returns a DECIMAL value with appropriate precision
+
+## Syntax
+```sql
+SELECT AVG(column_name)
+FROM table_name
+[WHERE condition]
+[GROUP BY column_name]
+[HAVING condition]
+[ORDER BY column_name];
+```
+
+### Parameters
+- `column_name`: The name of the numeric column for which you want to calculate the average
+- `table_name`: The name of the table containing the column
+- `condition`: Optional WHERE clause to filter rows before calculating the average
+
+### Return Value
+- Returns a DECIMAL value representing the average
+- Returns NULL if all values in the column are NULL
+- Returns NULL if no rows match the WHERE condition
+
+## Demo Database
+Below is a selection from the "Products" table in the Northwind sample database:
+
+| ProductID | ProductName | SupplierID | CategoryID | Unit | Price |
+|-----------|-------------|------------|------------|------|-------|
+| 1 | Chais | 1 | 1 | 10 boxes x 20 bags | 18.00 |
+| 2 | Chang | 1 | 1 | 24 - 12 oz bottles | 19.00 |
+| 3 | Aniseed Syrup | 1 | 2 | 12 - 550 ml bottles | 10.00 |
+| 4 | Chef Anton's Cajun Seasoning | 2 | 2 | 48 - 6 oz jars | 22.00 |
+| 5 | Chef Anton's Gumbo Mix | 2 | 2 | 36 boxes | 21.35 |
+| 6 | Grandma's Boysenberry Spread | 3 | 2 | 12 - 8 oz jars | 25.00 |
+| 7 | Uncle Bob's Organic Dried Pears | 3 | 7 | 12 - 1 lb pkgs. | 30.00 |
+| 8 | Northwoods Cranberry Sauce | 3 | 2 | 12 - 12 oz jars | 40.00 |
+
+## Basic Examples
+
+### Example 1: Simple Average
+The following SQL finds the average price of all products:
+
+```sql
+SELECT AVG(Price) AS AveragePrice
+FROM Products;
+```
+
+**Result:** 23.0625
+
+### Example 2: Average with WHERE Clause
+Return the average price of products in category 1:
+
+```sql
+SELECT AVG(Price) AS AvgPrice_Category1
+FROM Products
+WHERE CategoryID = 1;
+```
+
+**Result:** 18.50
+
+### Example 3: Average with GROUP BY
+Calculate average price by category:
+
+```sql
+SELECT CategoryID, AVG(Price) AS AvgPrice
+FROM Products
+GROUP BY CategoryID;
+```
+
+**Result:**
+| CategoryID | AvgPrice |
+|------------|----------|
+| 1 | 18.50 |
+| 2 | 23.76 |
+| 7 | 30.00 |
+
+## Advanced Examples
+
+### Example 4: Using AVG() in Subqueries
+Return all products with a higher price than the average price:
+
+```sql
+SELECT ProductID, ProductName, Price
+FROM Products
+WHERE Price > (SELECT AVG(Price) FROM Products);
+```
+
+**Result:**
+| ProductID | ProductName | Price |
+|-----------|-------------|-------|
+| 4 | Chef Anton's Cajun Seasoning | 22.00 |
+| 5 | Chef Anton's Gumbo Mix | 21.35 |
+| 6 | Grandma's Boysenberry Spread | 25.00 |
+| 7 | Uncle Bob's Organic Dried Pears | 30.00 |
+| 8 | Northwoods Cranberry Sauce | 40.00 |
+
+### Example 5: AVG() with DISTINCT
+Calculate average of distinct prices only:
+
+```sql
+SELECT AVG(DISTINCT Price) AS AvgDistinctPrice
+FROM Products;
+```
+
+**Note:** If there are duplicate prices, DISTINCT will consider each unique price only once.
+
+### Example 6: AVG() with ROUND()
+Round the average to 2 decimal places:
+
+```sql
+SELECT ROUND(AVG(Price), 2) AS RoundedAvgPrice
+FROM Products;
+```
+
+**Result:** 23.06
+
+### Example 7: AVG() with Multiple Conditions
+Average price for products from supplier 1 in category 2:
+
+```sql
+SELECT AVG(Price) AS AvgPrice_Supp1_Cat2
+FROM Products
+WHERE SupplierID = 1 AND CategoryID = 2;
+```
+
+**Result:** 10.00
+
+## Handling NULL Values
+
+### Example 8: AVG() Ignores NULL
+Consider a table with NULL values:
+
+```sql
+-- Assuming some products have NULL prices
+SELECT AVG(Price) AS AvgPrice_IncludingNulls
+FROM Products;  -- NULL values are ignored
+```
+
+**Important:** AVG() automatically excludes NULL values from the calculation. If you want to treat NULL as 0, use COALESCE:
+
+```sql
+SELECT AVG(COALESCE(Price, 0)) AS AvgPrice_WithNullAsZero
+FROM Products;
+```
+
+## Performance Considerations
+
+### Indexing
+- AVG() performance benefits from indexes on the column being averaged
+- For large tables, consider indexing the numeric column
+
+### Data Types
+- Use appropriate numeric data types to avoid precision loss
+- DECIMAL is recommended for financial calculations
+
+## Common Use Cases
+
+1. **Sales Analysis**: Average order value, average product price
+2. **Performance Metrics**: Average response time, average score
+3. **Quality Control**: Average defect rate, average measurement
+4. **Financial Reports**: Average transaction amount, average balance
+
+## Comparison with Other Aggregate Functions
+
+| Function | Purpose | NULL Handling |
+|----------|---------|---------------|
+| AVG() | Average value | Ignores NULL |
+| SUM() | Total sum | Ignores NULL |
+| COUNT() | Number of rows | Ignores NULL |
+| MIN() | Minimum value | Ignores NULL |
+| MAX() | Maximum value | Ignores NULL |
+
+## Error Handling
+
+### Division by Zero
+AVG() doesn't divide by zero since it counts non-NULL values.
+
+### Data Type Mismatch
+Attempting AVG() on non-numeric columns will result in an error:
+
+```sql
+-- This will cause an error
+SELECT AVG(ProductName) FROM Products;
+-- Error: Invalid use of group function
+```
+
+## Best Practices
+
+1. **Use Appropriate Precision**: Consider using ROUND() for display purposes
+2. **Handle NULLs Explicitly**: Use COALESCE if NULL should be treated as a specific value
+3. **Index Numeric Columns**: Improve performance on large datasets
+4. **Combine with Other Functions**: Use with ROUND(), CAST(), or mathematical functions as needed
+5. **Test with Sample Data**: Verify calculations with known datasets
+
+## Examples with Other Tables
+
+### Using Employees Table
+Assuming an Employees table with Salary column:
+
+```sql
+SELECT AVG(Salary) AS AverageSalary
+FROM Employees;
+```
+
+### Using OrderDetails Table
+Average quantity ordered:
+
+```sql
+SELECT AVG(Quantity) AS AvgQuantityOrdered
+FROM OrderDetails;
+```
+
+### Using with JOIN
+Average price by category name:
+
+```sql
+SELECT c.CategoryName, AVG(p.Price) AS AvgPrice
+FROM Products p
+JOIN Categories c ON p.CategoryID = c.CategoryID
+GROUP BY c.CategoryName;
+```
+
+## Mathematical Notes
+
+The AVG() function calculates: Σ(x₁ + x₂ + ... + xn) / n
+
+Where:
+- Σ represents the sum
+- x₁, x₂, ..., xn are the non-NULL values
+- n is the count of non-NULL values
+
+## Limitations
+
+1. **Memory Usage**: For very large datasets, consider using APPROXIMATE COUNT DISTINCT if exact precision isn't required
+2. **Precision Loss**: Floating-point arithmetic may introduce small precision errors
+3. **Performance**: On unindexed columns in large tables, calculation can be slow
+
+## See Also
+
+- [MySQL SUM() Function](MYSQL SUM() FUNCTION)
+- [MySQL COUNT() Function](MYSQL COUNT() FUNCTION)
+- [MySQL MIN() Function](MYSQL MIN() FUNCTION)
+- [MySQL MAX() Function](MYSQL MAX() FUNCTION)
+- MySQL Aggregate Functions documentation

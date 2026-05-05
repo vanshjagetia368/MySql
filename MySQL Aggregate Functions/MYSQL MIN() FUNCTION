@@ -1,0 +1,199 @@
+# MySQL MIN() Function
+
+## Overview
+The MIN() function is an aggregate function in MySQL that returns the smallest value from a set of values in a column. It can work with numeric values, strings, and dates.
+
+## Syntax
+```sql
+SELECT MIN(column_name)
+FROM table_name
+[WHERE condition]
+[GROUP BY column_name]
+[HAVING condition]
+[ORDER BY column_name];
+```
+
+### Parameters
+- `column_name`: The column from which to find the minimum value. This can be a numeric column, string column, or date column.
+
+### Return Value
+- Returns the smallest value in the specified column.
+- If the column contains NULL values, MIN() ignores them (except when all values are NULL, in which case it returns NULL).
+- For string columns, MIN() returns the lexicographically smallest string.
+- For date columns, MIN() returns the earliest date.
+
+## Examples
+
+### Demo Database
+We'll use the Northwind sample database for our examples. Below is a selection from the "Products" table:
+
+| ProductID | ProductName | SupplierID | CategoryID | Unit | Price |
+|-----------|-------------|------------|------------|------|-------|
+| 1 | Chais | 1 | 1 | 10 boxes x 20 bags | 18.00 |
+| 2 | Chang | 1 | 1 | 24 - 12 oz bottles | 19.00 |
+| 3 | Aniseed Syrup | 1 | 2 | 12 - 550 ml bottles | 10.00 |
+| 4 | Chef Anton's Cajun Seasoning | 2 | 2 | 48 - 6 oz jars | 22.00 |
+| 5 | Chef Anton's Gumbo Mix | 2 | 2 | 36 boxes | 21.35 |
+
+### Basic MIN() Example
+Find the lowest price in the Products table:
+
+```sql
+SELECT MIN(Price) AS SmallestPrice
+FROM Products;
+```
+
+**Result:**
+```
+SmallestPrice
+10.00
+```
+
+### MIN() with String Columns
+Find the product with the alphabetically first name:
+
+```sql
+SELECT MIN(ProductName) AS FirstProduct
+FROM Products;
+```
+
+**Result:**
+```
+FirstProduct
+Aniseed Syrup
+```
+
+### MIN() with Date Columns
+Using the Employees table, find the earliest birth date:
+
+```sql
+SELECT MIN(BirthDate) AS EarliestBirthDate
+FROM Employees;
+```
+
+**Result:**
+```
+EarliestBirthDate
+1955-03-04
+```
+
+### MIN() with WHERE Clause
+Find the minimum price for products in category 1:
+
+```sql
+SELECT MIN(Price) AS MinPriceCategory1
+FROM Products
+WHERE CategoryID = 1;
+```
+
+**Result:**
+```
+MinPriceCategory1
+18.00
+```
+
+### MIN() with GROUP BY
+Find the minimum price for each category:
+
+```sql
+SELECT CategoryID, MIN(Price) AS MinPrice
+FROM Products
+GROUP BY CategoryID;
+```
+
+**Result:**
+```
+CategoryID | MinPrice
+1          | 18.00
+2          | 10.00
+```
+
+### MIN() with Multiple Columns
+You can use MIN() on multiple columns in the same query:
+
+```sql
+SELECT 
+    MIN(Price) AS MinPrice,
+    MIN(UnitsInStock) AS MinStock
+FROM Products;
+```
+
+### MIN() with DISTINCT
+MIN() automatically considers distinct values, but you can combine it with DISTINCT if needed:
+
+```sql
+SELECT MIN(DISTINCT Price) AS MinDistinctPrice
+FROM Products;
+```
+
+### Handling NULL Values
+MIN() ignores NULL values. If all values in a group are NULL, MIN() returns NULL:
+
+```sql
+-- Assuming some products have NULL prices
+SELECT MIN(Price) AS MinPrice
+FROM Products
+WHERE Price IS NOT NULL;
+```
+
+### MIN() vs Other Aggregate Functions
+- **MIN()**: Returns the smallest value
+- **MAX()**: Returns the largest value
+- **AVG()**: Returns the average value
+- **SUM()**: Returns the sum of values
+- **COUNT()**: Returns the number of rows
+
+### Performance Considerations
+- MIN() can benefit from indexes on the column being aggregated
+- For large datasets, consider using appropriate indexes
+- MIN() is generally fast as it only needs to scan the column values
+
+### Common Use Cases
+1. Finding the cheapest product price
+2. Getting the earliest date in a dataset
+3. Finding the alphabetically first item
+4. Determining minimum inventory levels
+5. Analyzing minimum sales figures by category
+
+### Tips
+- Always use aliases with AS for better readability
+- Combine MIN() with other aggregate functions for comprehensive analysis
+- Use appropriate WHERE clauses to filter data before applying MIN()
+- Consider data types when using MIN() on mixed-type columns
+
+### Error Handling
+- If the column doesn't exist, MySQL will return an error
+- If no rows match the WHERE condition, MIN() returns NULL
+- Ensure proper data types to avoid unexpected results
+
+### Advanced Examples
+
+#### MIN() with Subqueries
+```sql
+SELECT ProductName, Price
+FROM Products
+WHERE Price = (SELECT MIN(Price) FROM Products);
+```
+
+#### MIN() with CASE Statement
+```sql
+SELECT 
+    CategoryID,
+    MIN(CASE 
+        WHEN Price > 20 THEN Price 
+        ELSE NULL 
+    END) AS MinExpensivePrice
+FROM Products
+GROUP BY CategoryID;
+```
+
+#### MIN() with Window Functions (MySQL 8.0+)
+```sql
+SELECT 
+    ProductName,
+    Price,
+    MIN(Price) OVER (PARTITION BY CategoryID) AS MinPriceByCategory
+FROM Products;
+```
+
+This comprehensive guide covers the MySQL MIN() function with various examples and use cases. The MIN() function is essential for data analysis and reporting in MySQL databases.

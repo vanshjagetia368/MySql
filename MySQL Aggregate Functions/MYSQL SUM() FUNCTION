@@ -1,0 +1,277 @@
+# MySQL SUM() Function
+
+## Overview
+The SUM() function is an aggregate function in MySQL that calculates the total sum of values within a numeric column. It only works with numeric data types and ignores NULL values in the calculation.
+
+## Syntax
+```sql
+SELECT SUM([DISTINCT] column_name)
+FROM table_name
+[WHERE condition]
+[GROUP BY column_name]
+[HAVING condition]
+[ORDER BY column_name];
+```
+
+### Parameters
+- `column_name`: The numeric column to sum
+- `DISTINCT`: Optional keyword to sum only distinct values
+
+### Return Value
+- Returns the sum of all non-null values in the specified column
+- Returns NULL if all values are NULL
+- Ignores NULL values in the calculation
+- For DISTINCT, sums only unique values
+
+### Important Notes
+- SUM() only works with numeric columns (INT, DECIMAL, FLOAT, etc.)
+- NULL values are completely ignored in the sum calculation
+- If no rows match the criteria, SUM() returns NULL
+- SUM(DISTINCT) sums only unique values, excluding duplicates
+
+## Examples
+
+### Demo Database
+We'll use the Northwind sample database for our examples. Below is a selection from the "OrderDetails" table:
+
+| OrderDetailID | OrderID | ProductID | Quantity |
+|----------------|---------|-----------|----------|
+| 1 | 10248 | 11 | 12 |
+| 2 | 10248 | 42 | 10 |
+| 3 | 10248 | 72 | 5 |
+| 4 | 10249 | 14 | 9 |
+| 5 | 10249 | 51 | 40 |
+
+### Basic SUM() Example
+Calculate the total quantity from all order details:
+
+```sql
+SELECT SUM(Quantity)
+FROM OrderDetails;
+```
+
+**Result:**
+```
+SUM(Quantity)
+76
+```
+
+### SUM() with WHERE Clause
+Calculate the sum of quantity for a specific product (ProductID = 11):
+
+```sql
+SELECT SUM(Quantity)
+FROM OrderDetails
+WHERE ProductID = 11;
+```
+
+**Result:**
+```
+SUM(Quantity)
+12
+```
+
+### SUM() with GROUP BY
+Calculate total quantity by product:
+
+```sql
+SELECT ProductID, SUM(Quantity) AS TotalQuantity
+FROM OrderDetails
+GROUP BY ProductID;
+```
+
+**Result:**
+```
+ProductID | TotalQuantity
+11        | 12
+14        | 9
+42        | 10
+51        | 40
+72        | 5
+```
+
+### SUM() with DISTINCT
+Sum only distinct quantity values:
+
+```sql
+SELECT SUM(DISTINCT Quantity) AS SumDistinctQuantities
+FROM OrderDetails;
+```
+
+**Result:**
+```
+SumDistinctQuantities
+76
+```
+
+### SUM() with Multiple Columns
+Calculate multiple sums in one query:
+
+```sql
+SELECT 
+    SUM(Quantity) AS TotalQuantity,
+    SUM(UnitPrice * Quantity) AS TotalValue,
+    AVG(Quantity) AS AvgQuantity
+FROM OrderDetails;
+```
+
+### SUM() with HAVING Clause
+Find products with total quantity greater than 10:
+
+```sql
+SELECT ProductID, SUM(Quantity) AS TotalQuantity
+FROM OrderDetails
+GROUP BY ProductID
+HAVING SUM(Quantity) > 10;
+```
+
+### Handling NULL Values
+SUM() automatically ignores NULL values:
+
+```sql
+-- Assuming some quantities are NULL
+SELECT 
+    COUNT(*) AS TotalRows,
+    COUNT(Quantity) AS NonNullQuantities,
+    SUM(Quantity) AS SumNonNullQuantities
+FROM OrderDetails;
+```
+
+### SUM() with JOINs
+Calculate total sales value by joining tables:
+
+```sql
+SELECT 
+    p.ProductName,
+    SUM(od.Quantity * od.UnitPrice) AS TotalSales
+FROM OrderDetails od
+JOIN Products p ON od.ProductID = p.ProductID
+GROUP BY p.ProductName;
+```
+
+### Advanced SUM() Examples
+
+#### SUM() with Subqueries
+```sql
+SELECT ProductID, Quantity
+FROM OrderDetails
+WHERE Quantity > (SELECT SUM(Quantity) / COUNT(*) FROM OrderDetails);
+```
+
+#### SUM() with CASE Statement
+```sql
+SELECT 
+    SUM(CASE WHEN Quantity > 10 THEN Quantity ELSE 0 END) AS LargeOrders,
+    SUM(CASE WHEN Quantity <= 10 THEN Quantity ELSE 0 END) AS SmallOrders
+FROM OrderDetails;
+```
+
+#### SUM() with Window Functions (MySQL 8.0+)
+```sql
+SELECT 
+    OrderID,
+    ProductID,
+    Quantity,
+    SUM(Quantity) OVER (PARTITION BY OrderID) AS TotalPerOrder
+FROM OrderDetails;
+```
+
+#### Running Total with SUM()
+```sql
+SELECT 
+    OrderDetailID,
+    Quantity,
+    SUM(Quantity) OVER (ORDER BY OrderDetailID) AS RunningTotal
+FROM OrderDetails;
+```
+
+### SUM() vs Other Aggregate Functions
+- **SUM()**: Returns the sum of values
+- **COUNT()**: Returns the number of rows/values
+- **AVG()**: Returns the average value
+- **MIN()**: Returns the smallest value
+- **MAX()**: Returns the largest value
+
+### Performance Considerations
+- SUM() can benefit from indexes on the summed column
+- For large datasets with many NULLs, SUM() is efficient as it skips NULLs
+- Consider using SUM() with appropriate WHERE clauses to limit data
+- For very large tables, consider partitioning or summary tables
+
+### Common Use Cases
+1. Calculating total sales or revenue
+2. Summing quantities or amounts
+3. Computing running totals
+4. Aggregating financial data
+5. Calculating inventory totals
+6. Analyzing order values
+
+### Tips
+- Always ensure the column contains numeric data
+- Use aliases with AS for better readability
+- Combine SUM() with other aggregate functions for comprehensive analysis
+- Use appropriate WHERE clauses to filter data before summing
+- Be aware that NULL values are ignored (not treated as zero)
+
+### Error Handling
+- If the column contains non-numeric data, MySQL will return an error
+- If no rows match the WHERE condition, SUM() returns NULL
+- Ensure proper data types to avoid unexpected results
+
+### Practical Examples
+
+#### Total Sales by Month
+```sql
+SELECT 
+    YEAR(OrderDate) AS Year,
+    MONTH(OrderDate) AS Month,
+    SUM(TotalAmount) AS MonthlySales
+FROM Orders
+GROUP BY YEAR(OrderDate), MONTH(OrderDate)
+ORDER BY Year, Month;
+```
+
+#### Customer Total Purchases
+```sql
+SELECT 
+    c.CustomerName,
+    SUM(o.TotalAmount) AS TotalPurchases
+FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+GROUP BY c.CustomerName
+ORDER BY TotalPurchases DESC;
+```
+
+#### Product Revenue Analysis
+```sql
+SELECT 
+    p.ProductName,
+    SUM(od.Quantity) AS TotalQuantity,
+    SUM(od.Quantity * od.UnitPrice) AS TotalRevenue,
+    AVG(od.UnitPrice) AS AvgPrice
+FROM Products p
+JOIN OrderDetails od ON p.ProductID = od.ProductID
+GROUP BY p.ProductName
+ORDER BY TotalRevenue DESC;
+```
+
+#### Inventory Value Calculation
+```sql
+SELECT 
+    SUM(UnitsInStock * UnitPrice) AS TotalInventoryValue
+FROM Products
+WHERE UnitsInStock > 0;
+```
+
+#### Commission Calculation
+```sql
+SELECT 
+    EmployeeID,
+    SUM(OrderTotal) AS TotalSales,
+    SUM(OrderTotal) * 0.05 AS Commission
+FROM Sales
+GROUP BY EmployeeID
+HAVING SUM(OrderTotal) > 10000;
+```
+
+This comprehensive guide covers the MySQL SUM() function with various examples and use cases. The SUM() function is essential for financial calculations, inventory management, and data aggregation in MySQL databases.

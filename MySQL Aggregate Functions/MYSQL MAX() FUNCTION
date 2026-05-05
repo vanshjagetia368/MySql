@@ -1,0 +1,199 @@
+# MySQL MAX() Function
+
+## Overview
+The MAX() function is an aggregate function in MySQL that returns the largest value from a set of values in a column. It can work with numeric values, strings, and dates.
+
+## Syntax
+```sql
+SELECT MAX(column_name)
+FROM table_name
+[WHERE condition]
+[GROUP BY column_name]
+[HAVING condition]
+[ORDER BY column_name];
+```
+
+### Parameters
+- `column_name`: The column from which to find the maximum value. This can be a numeric column, string column, or date column.
+
+### Return Value
+- Returns the largest value in the specified column.
+- If the column contains NULL values, MAX() ignores them (except when all values are NULL, in which case it returns NULL).
+- For string columns, MAX() returns the lexicographically largest string.
+- For date columns, MAX() returns the latest date.
+
+## Examples
+
+### Demo Database
+We'll use the Northwind sample database for our examples. Below is a selection from the "Products" table:
+
+| ProductID | ProductName | SupplierID | CategoryID | Unit | Price |
+|-----------|-------------|------------|------------|------|-------|
+| 1 | Chais | 1 | 1 | 10 boxes x 20 bags | 18.00 |
+| 2 | Chang | 1 | 1 | 24 - 12 oz bottles | 19.00 |
+| 3 | Aniseed Syrup | 1 | 2 | 12 - 550 ml bottles | 10.00 |
+| 4 | Chef Anton's Cajun Seasoning | 2 | 2 | 48 - 6 oz jars | 22.00 |
+| 5 | Chef Anton's Gumbo Mix | 2 | 2 | 36 boxes | 21.35 |
+
+### Basic MAX() Example
+Find the highest price in the Products table:
+
+```sql
+SELECT MAX(Price) AS LargestPrice
+FROM Products;
+```
+
+**Result:**
+```
+LargestPrice
+22.00
+```
+
+### MAX() with String Columns
+Find the product with the alphabetically last name:
+
+```sql
+SELECT MAX(ProductName) AS LastProduct
+FROM Products;
+```
+
+**Result:**
+```
+LastProduct
+Uncle Bobs Organic Dried Pears
+```
+
+### MAX() with Date Columns
+Using the Employees table, find the latest birth date:
+
+```sql
+SELECT MAX(BirthDate) AS LatestBirthDate
+FROM Employees;
+```
+
+**Result:**
+```
+LatestBirthDate
+1969-07-02
+```
+
+### MAX() with WHERE Clause
+Find the maximum price for products in category 1:
+
+```sql
+SELECT MAX(Price) AS MaxPriceCategory1
+FROM Products
+WHERE CategoryID = 1;
+```
+
+**Result:**
+```
+MaxPriceCategory1
+19.00
+```
+
+### MAX() with GROUP BY
+Find the maximum price for each category:
+
+```sql
+SELECT CategoryID, MAX(Price) AS MaxPrice
+FROM Products
+GROUP BY CategoryID;
+```
+
+**Result:**
+```
+CategoryID | MaxPrice
+1          | 19.00
+2          | 22.00
+```
+
+### MAX() with Multiple Columns
+You can use MAX() on multiple columns in the same query:
+
+```sql
+SELECT 
+    MAX(Price) AS MaxPrice,
+    MAX(UnitsInStock) AS MaxStock
+FROM Products;
+```
+
+### MAX() with DISTINCT
+MAX() automatically considers distinct values, but you can combine it with DISTINCT if needed:
+
+```sql
+SELECT MAX(DISTINCT Price) AS MaxDistinctPrice
+FROM Products;
+```
+
+### Handling NULL Values
+MAX() ignores NULL values. If all values in a group are NULL, MAX() returns NULL:
+
+```sql
+-- Assuming some products have NULL prices
+SELECT MAX(Price) AS MaxPrice
+FROM Products
+WHERE Price IS NOT NULL;
+```
+
+### MAX() vs Other Aggregate Functions
+- **MAX()**: Returns the largest value
+- **MIN()**: Returns the smallest value
+- **AVG()**: Returns the average value
+- **SUM()**: Returns the sum of values
+- **COUNT()**: Returns the number of rows
+
+### Performance Considerations
+- MAX() can benefit from indexes on the column being aggregated
+- For large datasets, consider using appropriate indexes
+- MAX() is generally fast as it only needs to scan the column values
+
+### Common Use Cases
+1. Finding the most expensive product price
+2. Getting the latest date in a dataset
+3. Finding the alphabetically last item
+4. Determining maximum inventory levels
+5. Analyzing maximum sales figures by category
+
+### Tips
+- Always use aliases with AS for better readability
+- Combine MAX() with other aggregate functions for comprehensive analysis
+- Use appropriate WHERE clauses to filter data before applying MAX()
+- Consider data types when using MAX() on mixed-type columns
+
+### Error Handling
+- If the column doesn't exist, MySQL will return an error
+- If no rows match the WHERE condition, MAX() returns NULL
+- Ensure proper data types to avoid unexpected results
+
+### Advanced Examples
+
+#### MAX() with Subqueries
+```sql
+SELECT ProductName, Price
+FROM Products
+WHERE Price = (SELECT MAX(Price) FROM Products);
+```
+
+#### MAX() with CASE Statement
+```sql
+SELECT 
+    CategoryID,
+    MAX(CASE 
+        WHEN Price < 20 THEN Price 
+        ELSE NULL 
+    END) AS MaxCheapPrice
+FROM Products
+GROUP BY CategoryID;
+```
+
+#### MAX() with Window Functions (MySQL 8.0+)
+```sql
+SELECT 
+    ProductName,
+    Price,
+    MAX(Price) OVER (PARTITION BY CategoryID) AS MaxPriceByCategory
+FROM Products;
+```
+
+This comprehensive guide covers the MySQL MAX() function with various examples and use cases. The MAX() function is essential for data analysis and reporting in MySQL databases.
