@@ -1,3 +1,5 @@
+USE MySQLDB;
+
 CREATE TABLE Employees (
     EmployeeID INT PRIMARY KEY,
     LastName VARCHAR(255),
