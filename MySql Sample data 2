@@ -1,5 +1,5 @@
-CREATE DATABASE ProductsDB;
-USE ProductsDB;
+USE MySQLDB;
+
 CREATE TABLE Products (
     ProductID INT PRIMARY KEY,
     ProductName VARCHAR(255),
