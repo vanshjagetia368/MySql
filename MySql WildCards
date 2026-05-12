@@ -1,0 +1,801 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                          MYSQL WILDCARD CHARACTERS                             ║
+║                  Complete Guide with Examples and Best Practices                ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════════
+📖 INTRODUCTION TO WILDCARDS
+═══════════════════════════════════════════════════════════════════════════════════
+
+A wildcard character is used to substitute one or more characters in a string. These
+special characters allow for flexible pattern matching when searching for data in
+your MySQL database.
+
+Wildcard characters are used with the LIKE operator. The LIKE operator is used in a
+WHERE clause to search for a specified pattern in a column.
+
+KEY CONCEPT:
+Wildcards provide a powerful way to filter data based on patterns rather than exact
+matches, making queries more flexible and dynamic.
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🔤 MYSQL WILDCARD CHARACTERS - REFERENCE TABLE
+═══════════════════════════════════════════════════════════════════════════════════
+
+┌─────────┬────────────────────────────────────────┬──────────────────────────────┐
+│ Symbol  │ Description                            │ Example                      │
+├─────────┼────────────────────────────────────────┼──────────────────────────────┤
+│    %    │ Represents zero, one, or multiple      │ bl% finds:                   │
+│         │ characters                             │ • bl                         │
+│         │                                        │ • black                      │
+│         │                                        │ • blue                       │
+│         │                                        │ • blob                       │
+├─────────┼────────────────────────────────────────┼──────────────────────────────┤
+│    _    │ Represents a SINGLE character only     │ h_t finds:                   │
+│         │ (exactly one character)                │ • hot                        │
+│         │                                        │ • hat                        │
+│         │                                        │ • hit                        │
+└─────────┴────────────────────────────────────────┴──────────────────────────────┘
+
+IMPORTANT NOTE:
+The wildcards can also be used in combinations! You can mix % and _ wildcards
+in the same pattern for more precise searches.
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🔍 COMPREHENSIVE LIKE OPERATOR EXAMPLES WITH % WILDCARD
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. PATTERN: WHERE CustomerName LIKE 'a%'
+   DESCRIPTION: Finds any values that start with "a" (at the beginning)
+   MATCHES:
+   • 'alfreds' - Starts with 'a'
+   • 'ana' - Starts with 'a'
+   • 'antonio' - Starts with 'a'
+   • 'around' - Starts with 'a'
+   
+   QUERY EXAMPLE:
+   SELECT * FROM Customers WHERE CustomerName LIKE 'a%';
+   
+   USE CASE: Finding all customer names beginning with a specific letter
+
+
+2. PATTERN: WHERE CustomerName LIKE '%a'
+   DESCRIPTION: Finds any values that end with "a" (at the end)
+   MATCHES:
+   • 'anna' - Ends with 'a'
+   • 'maria' - Ends with 'a'
+   • 'helena' - Ends with 'a'
+   
+   QUERY EXAMPLE:
+   SELECT * FROM Customers WHERE CustomerName LIKE '%a';
+   
+   USE CASE: Finding names with specific endings
+
+
+3. PATTERN: WHERE CustomerName LIKE '%or%'
+   DESCRIPTION: Finds any values that have "or" in ANY position (beginning, middle, or end)
+   MATCHES:
+   • 'Moreno' - Contains 'or' in the middle
+   • 'Antonio' - Contains 'or' in the middle
+   • 'corridor' - Contains 'or' in the middle
+   
+   QUERY EXAMPLE:
+   SELECT * FROM Customers WHERE CustomerName LIKE '%or%';
+   
+   USE CASE: Finding records containing a specific substring anywhere in the column
+
+
+4. PATTERN: WHERE ContactName LIKE 'a%o'
+   DESCRIPTION: Finds values that START with "a" and END with "o"
+   MATCHES:
+   • 'antonio' - Starts with 'a' AND ends with 'o'
+   • 'alonso' - Starts with 'a' AND ends with 'o'
+   • 'alejandro' - Starts with 'a' AND ends with 'o'
+   
+   QUERY EXAMPLE:
+   SELECT * FROM Customers WHERE ContactName LIKE 'a%o';
+   
+   USE CASE: Finding records matching both beginning and ending patterns
+
+
+5. PATTERN: WHERE City LIKE 'ber%'
+   DESCRIPTION: Finds all cities starting with "ber"
+   MATCHES:
+   • 'Berlin' - Starts with 'ber'
+   • 'Bern' - Starts with 'ber'
+   • 'Bergamo' - Starts with 'ber'
+   
+   QUERY EXAMPLE:
+   SELECT * FROM Customers WHERE City LIKE 'ber%';
+   
+   USE CASE: Finding records in cities starting with specific letters/pattern
+
+
+6. PATTERN: WHERE City LIKE '%es%'
+   DESCRIPTION: Finds all cities containing the pattern "es" anywhere
+   MATCHES:
+   • 'Manchester' - Contains 'es'
+   • 'Brest' - Contains 'es'
+   • 'Budapest' - Contains 'es'
+   
+   QUERY EXAMPLE:
+   SELECT * FROM Customers WHERE City LIKE '%es%';
+   
+   USE CASE: Finding records with a specific substring in the middle
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🎯 COMPREHENSIVE LIKE OPERATOR EXAMPLES WITH _ WILDCARD
+═══════════════════════════════════════════════════════════════════════════════════
+
+The _ wildcard represents a SINGLE character. Each underscore (_) represents exactly
+one, and only one, character. This is more restrictive than % and useful for
+fixed-length patterns.
+
+1. PATTERN: WHERE City LIKE '_ondon'
+   DESCRIPTION: Finds cities where ANY single character is followed by "ondon"
+   MATCHES:
+   • 'London' - 'L' matches the underscore
+   • 'Condon' - 'C' matches the underscore
+   
+   DOES NOT MATCH:
+   • 'ondon' - Missing the first character
+   • 'Londoned' - Has extra characters at the end
+   
+   QUERY EXAMPLE:
+   SELECT * FROM Customers WHERE City LIKE '_ondon';
+
+
+2. PATTERN: WHERE City LIKE 'L_n_on'
+   DESCRIPTION: Finds cities with pattern: L + any char + n + any char + on
+   MATCHES:
+   • 'London' - L + o + n + d + on ✓
+   • 'Lincon' - L + i + n + c + on ✓
+   
+   DOES NOT MATCH:
+   • 'Lanon' - Only 5 characters (needs 6)
+   • 'Lanton' - 6 characters but pattern doesn't match
+   
+   QUERY EXAMPLE:
+   SELECT * FROM Customers WHERE City LIKE 'L_n_on';
+
+
+3. PATTERN: WHERE ProductName LIKE 't__'
+   DESCRIPTION: Finds products with names starting with 't' and exactly 3 characters long
+   MATCHES:
+   • 'tea' - 3 characters starting with 't'
+   • 'top' - 3 characters starting with 't'
+   • 'toy' - 3 characters starting with 't'
+   
+   DOES NOT MATCH:
+   • 'to' - Only 2 characters
+   • 'tent' - 4 characters
+
+
+4. PATTERN: WHERE Email LIKE '_@%.com'
+   DESCRIPTION: Finds emails with pattern: 1 char + @ + any chars + .com
+   MATCHES:
+   • 'a@example.com' - Starts with single character before @
+   • 'b@mail.com' - Starts with single character before @
+   
+   DOES NOT MATCH:
+   • 'ab@example.com' - Has 2 characters before @
+   • '@example.com' - Missing the first character
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🎪 COMBINED WILDCARD EXAMPLES (% and _ Together)
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. PATTERN: WHERE CustomerName LIKE 'a_%_%'
+   DESCRIPTION: Finds values that START with "a" and are AT LEAST 3 characters in length
+   EXPLANATION:
+   • 'a' - starts with 'a'
+   • '_' - any single character
+   • '_' - any single character
+   • '%' - zero or more characters
+   
+   MATCHES:
+   • 'anna' - a + n + n + a
+   • 'antonio' - a + n + t + onio
+   • 'alex' - a + l + e + x
+   
+   DOES NOT MATCH:
+   • 'an' - Only 2 characters
+   • 'a' - Only 1 character
+
+
+2. PATTERN: WHERE ProductName LIKE '%c_t%'
+   DESCRIPTION: Finds products with pattern: contains c + any char + t anywhere
+   MATCHES:
+   • 'chocolate' - contains 'cate'
+   • 'biscuit' - contains 'cuit'
+   • 'scratch' - contains 'cat'
+   
+   QUERY EXAMPLE:
+   SELECT * FROM Products WHERE ProductName LIKE '%c_t%';
+
+
+3. PATTERN: WHERE Description LIKE '_e%d'
+   DESCRIPTION: Finds descriptions that have any char + 'e' at start and end with 'd'
+   MATCHES:
+   • 'described' - _e%d
+   • 'legend' - _e%d
+   • 'legend' - _e%d
+
+
+4. PATTERN: WHERE Address LIKE '%_st%'
+   DESCRIPTION: Finds addresses containing any char followed by 'st'
+   USE CASE: Finding addresses with "street", "best", "first", etc.
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🗂️ SAMPLE DATABASE - CUSTOMERS TABLE (Northwind Database)
+═══════════════════════════════════════════════════════════════════════════════════
+
+┌────────────┬─────────────────────────────────┬──────────────────┬──────────────┐
+│ CustomerID │ CustomerName                    │ ContactName      │ City         │
+├────────────┼─────────────────────────────────┼──────────────────┼──────────────┤
+│ 1          │ Alfreds Futterkiste             │ Maria Anders     │ Berlin       │
+│ 2          │ Ana Trujillo Emparedados        │ Ana Trujillo     │ México D.F.  │
+│ 3          │ Antonio Moreno Taquería         │ Antonio Moreno   │ México D.F.  │
+│ 4          │ Around the Horn                 │ Thomas Hardy     │ London       │
+│ 5          │ Berglunds snabbköp              │ Christina        │ Luleå        │
+└────────────┴─────────────────────────────────┴──────────────────┴──────────────┘
+
+┌────────────┬─────────────────────────┬──────────────┬────────────┬─────────────┐
+│ CustomerID │ Address                 │ PostalCode   │ Country    │ Phone       │
+├────────────┼─────────────────────────┼──────────────┼────────────┼─────────────┤
+│ 1          │ Obere Str. 57           │ 12209        │ Germany    │ 030-0074321 │
+│ 2          │ Avda. Const. 2222       │ 05021        │ Mexico     │ (5)555-4729 │
+│ 3          │ Mataderos 2312          │ 05023        │ Mexico     │ (5)555-3932 │
+│ 4          │ 120 Hanover Sq.         │ WA1 1DP      │ UK         │ (171)555-77 │
+│ 5          │ Berguvsvägen 8          │ S-958 22     │ Sweden     │ 031-959 410 │
+└────────────┴─────────────────────────┴──────────────┴────────────┴─────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+📝 PRACTICAL SQL QUERIES USING % WILDCARD
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. SELECT ALL CUSTOMERS WITH CITY STARTING WITH "BER"
+   ────────────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE City LIKE 'ber%';
+   
+   OUTPUT:
+   ┌────────────┬──────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName             │ ContactName      │ City         │
+   ├────────────┼──────────────────────────┼──────────────────┼──────────────┤
+   │ 1          │ Alfreds Futterkiste      │ Maria Anders     │ Berlin       │
+   └────────────┴──────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 1
+
+
+2. SELECT ALL CUSTOMERS WITH CITY CONTAINING "ES"
+   ──────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE City LIKE '%es%';
+   
+   OUTPUT:
+   No rows returned (0 rows)
+   
+   NOTE: The sample database shown doesn't have cities containing "es". 
+   In a full database, this would return cities like: Brest, Budapest, Manchester, etc.
+
+
+3. SELECT ALL CUSTOMERS WHOSE NAME STARTS WITH 'A' OR 'B'
+   ───────────────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE CustomerName LIKE 'a%' OR CustomerName LIKE 'b%';
+   
+   OUTPUT:
+   ┌────────────┬─────────────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName                    │ ContactName      │ City         │
+   ├────────────┼─────────────────────────────────┼──────────────────┼──────────────┤
+   │ 1          │ Alfreds Futterkiste             │ Maria Anders     │ Berlin       │
+   │ 2          │ Ana Trujillo Emparedados        │ Ana Trujillo     │ México D.F.  │
+   │ 3          │ Antonio Moreno Taquería         │ Antonio Moreno   │ México D.F.  │
+   │ 4          │ Around the Horn                 │ Thomas Hardy     │ London       │
+   │ 5          │ Berglunds snabbköp              │ Christina        │ Luleå        │
+   └────────────┴─────────────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 5 (All 5 customers match the pattern)
+
+
+4. SELECT CUSTOMERS WITH CONTACT NAME STARTING WITH 'A' AND ENDING WITH 'O'
+   ─────────────────────────────────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE ContactName LIKE 'a%o';
+   
+   OUTPUT:
+   ┌────────────┬───────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName              │ ContactName      │ City         │
+   ├────────────┼───────────────────────────┼──────────────────┼──────────────┤
+   │ 3          │ Antonio Moreno Taquería   │ Antonio Moreno   │ México D.F.  │
+   └────────────┴───────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 1 (Only "Antonio Moreno" starts with 'a' and ends with 'o')
+
+
+5. SELECT CUSTOMERS WHERE ADDRESS CONTAINS "STR"
+   ──────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE Address LIKE '%str%';
+   
+   OUTPUT:
+   ┌────────────┬──────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName             │ ContactName      │ Address      │
+   ├────────────┼──────────────────────────┼──────────────────┼──────────────┤
+   │ 1          │ Alfreds Futterkiste      │ Maria Anders     │ Obere Str. 57│
+   └────────────┴──────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 1 (Address contains "Str.")
+
+
+6. SELECT CUSTOMERS IN COUNTRIES STARTING WITH "M"
+   ────────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE Country LIKE 'm%';
+   
+   OUTPUT:
+   ┌────────────┬──────────────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName                     │ Country          │ City         │
+   ├────────────┼──────────────────────────────────┼──────────────────┼──────────────┤
+   │ 2          │ Ana Trujillo Emparedados         │ Mexico           │ México D.F.  │
+   │ 3          │ Antonio Moreno Taquería          │ Mexico           │ México D.F.  │
+   └────────────┴──────────────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 2 (Both customers from Mexico)
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+📝 PRACTICAL SQL QUERIES USING _ WILDCARD
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. SELECT ALL CUSTOMERS IN A SPECIFIC 3-CHARACTER CITY CODE
+   ─────────────────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE City LIKE '___';
+   
+   OUTPUT:
+   No rows returned (0 rows)
+   
+   NOTE: None of the sample cities have exactly 3 characters.
+   This pattern would match cities like: 'New York' split as 'New' - No, doesn't match pattern.
+   Would match: 'NYC', 'LAX', 'SFO' (if they existed)
+
+
+2. SELECT CUSTOMERS WHERE CITY IS "_ONDON"
+   ──────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE City LIKE '_ondon';
+   
+   OUTPUT:
+   ┌────────────┬──────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName             │ ContactName      │ City         │
+   ├────────────┼──────────────────────────┼──────────────────┼──────────────┤
+   │ 4          │ Around the Horn          │ Thomas Hardy     │ London       │
+   └────────────┴──────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 1 (London matches the pattern _ondon)
+
+
+3. SELECT CUSTOMERS WITH LAST NAME HAVING SPECIFIC PATTERN
+   ────────────────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE ContactName LIKE '______ Moreno';
+   
+   OUTPUT:
+   ┌────────────┬───────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName              │ ContactName      │ City         │
+   ├────────────┼───────────────────────────┼──────────────────┼──────────────┤
+   │ 3          │ Antonio Moreno Taquería   │ Antonio Moreno   │ México D.F.  │
+   └────────────┴───────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 1
+   EXPLANATION: "Antonio Moreno" = 6 characters (A-n-t-o-n-i) + space + "Moreno"
+
+
+4. SELECT POSTAL CODES WITH SPECIFIC FORMAT
+   ──────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE PostalCode LIKE '_____';
+   
+   OUTPUT:
+   ┌────────────┬──────────────────────────┬────────────┐
+   │ CustomerID │ CustomerName             │ PostalCode │
+   ├────────────┼──────────────────────────┼────────────┤
+   │ 1          │ Alfreds Futterkiste      │ 12209      │
+   │ 2          │ Ana Trujillo Emparedados │ 05021      │
+   │ 3          │ Antonio Moreno Taquería  │ 05023      │
+   └────────────┴──────────────────────────┴────────────┘
+   
+   Rows affected: 3 (Postal codes with exactly 5 digits)
+   
+   NOTE: PostalCode 'WA1 1DP' has 7 characters (with space), 'S-958 22' has 7 characters - Don't match
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🔄 COMBINING % AND _ WILDCARDS - ADVANCED QUERIES
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. CUSTOMERS WITH AT LEAST 3-CHARACTER NAMES STARTING WITH 'A'
+   ────────────────────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE CustomerName LIKE 'a_%_%';
+   
+   EXPLANATION:
+   • 'a' - Must start with 'a'
+   • '_' - Any single character (ensures 2nd character exists)
+   • '_' - Any single character (ensures 3rd character exists)
+   • '%' - Zero or more characters (remaining part of name)
+   
+   OUTPUT:
+   ┌────────────┬─────────────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName                    │ ContactName      │ City         │
+   ├────────────┼─────────────────────────────────┼──────────────────┼──────────────┤
+   │ 1          │ Alfreds Futterkiste             │ Maria Anders     │ Berlin       │
+   │ 2          │ Ana Trujillo Emparedados        │ Ana Trujillo     │ México D.F.  │
+   │ 3          │ Antonio Moreno Taquería         │ Antonio Moreno   │ México D.F.  │
+   │ 4          │ Around the Horn                 │ Thomas Hardy     │ London       │
+   └────────────┴─────────────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 4 (All customers starting with 'a' have 3+ characters)
+
+
+2. CITIES STARTING WITH ANY CHARACTER FOLLOWED BY "ER" AND ENDING WITH "LIN"
+   ─────────────────────────────────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE City LIKE '_er%lin';
+   
+   OUTPUT:
+   ┌────────────┬──────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName             │ ContactName      │ City         │
+   ├────────────┼──────────────────────────┼──────────────────┼──────────────┤
+   │ 1          │ Alfreds Futterkiste      │ Maria Anders     │ Berlin       │
+   └────────────┴──────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 1
+   EXPLANATION: "Berlin" matches pattern _er%lin (B + er + lin)
+
+
+3. CUSTOMER NAMES WITH PATTERN: ANY CHAR + "AN" + ANY CHARS
+   ─────────────────────────────────────────────────────────
+   SELECT * FROM Customers
+   WHERE CustomerName LIKE '_an%';
+   
+   OUTPUT:
+   ┌────────────┬─────────────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName                    │ ContactName      │ City         │
+   ├────────────┼─────────────────────────────────┼──────────────────┼──────────────┤
+   │ 1          │ Alfreds Futterkiste             │ Maria Anders     │ Berlin       │
+   │ 2          │ Ana Trujillo Emparedados        │ Ana Trujillo     │ México D.F.  │
+   │ 3          │ Antonio Moreno Taquería         │ Antonio Moreno   │ México D.F.  │
+   └────────────┴─────────────────────────────────┴──────────────────┴──────────────┘
+   
+   Rows affected: 3
+   EXPLANATION: 
+   • 'Alfreds' - A + l + a + n + d + s (matches as _an pattern)
+   • 'Ana' - A + n + a (matches as _an)
+   • 'Antonio' - A + n + t + o + n + i + o (matches as _an)
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+💡 BEST PRACTICES & PERFORMANCE CONSIDERATIONS
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. STARTING WITH % IS INEFFICIENT
+   ────────────────────────────────
+   ❌ SLOW:  SELECT * FROM Customers WHERE City LIKE '%berlin%';
+   ✓ BETTER: SELECT * FROM Customers WHERE City LIKE 'berlin%';
+   
+   Both queries return the same result:
+   ┌────────────┬──────────────────────────┬──────────────────┬──────────────┐
+   │ CustomerID │ CustomerName             │ ContactName      │ City         │
+   ├────────────┼──────────────────────────┼──────────────────┼──────────────┤
+   │ 1          │ Alfreds Futterkiste      │ Maria Anders     │ Berlin       │
+   └────────────┴──────────────────────────┴──────────────────┴──────────────┘
+   
+   Performance Impact:
+   • First query scans ALL rows (poor index usage)
+   • Second query uses index efficiently (better performance)
+   
+   WHY: When % is at the beginning, MySQL cannot use index efficiently as it needs
+        to scan all rows. Starting with a specific character allows index usage.
+
+
+2. AVOID WILDCARDS WHEN POSSIBLE
+   ──────────────────────────────
+   ❌ SLOW:  SELECT * FROM Customers WHERE CustomerName LIKE 'a%';
+   ✓ BETTER: SELECT * FROM Customers WHERE CustomerName >= 'a' AND CustomerName < 'b';
+   
+   WHY: Exact comparisons are faster than pattern matching.
+
+
+3. CASE SENSITIVITY
+   ──────────────────
+   NOTE: LIKE is case-INSENSITIVE by default in MySQL
+   
+   SELECT * FROM Customers WHERE City LIKE 'berlin%';
+   ✓ Matches: Berlin, BERLIN, berlin, BeRLiN
+   
+   For case-SENSITIVE matching:
+   SELECT * FROM Customers WHERE City LIKE BINARY 'berlin%';
+
+
+4. ESCAPING SPECIAL CHARACTERS
+   ────────────────────────────
+   If you need to search for literal '%' or '_' characters:
+   
+   SELECT * FROM Products WHERE ProductName LIKE '%\%%';  -- Finds % sign
+   SELECT * FROM Products WHERE ProductName LIKE '%\_' ESCAPE '\';  -- Finds _
+
+
+5. COMBINING WITH OTHER CONDITIONS
+   ─────────────────────────────────
+   SELECT * FROM Customers
+   WHERE City LIKE 'b%' 
+   AND Country = 'Germany'
+   AND CustomerID > 5;
+   
+   Best Practice: Use AND conditions to narrow down results before LIKE matching
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🎯 REAL-WORLD USE CASES WITH QUERY OUTPUTS
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. SEARCH BY DOMAIN NAME
+   ─────────────────────
+   QUERY:
+   SELECT * FROM Users WHERE Email LIKE '%@gmail.com';
+   
+   OUTPUT:
+   ┌──────────┬──────────────────────────┬──────────────────────────┐
+   │ UserID   │ UserName                 │ Email                    │
+   ├──────────┼──────────────────────────┼──────────────────────────┤
+   │ 1        │ John Smith               │ john.smith@gmail.com     │
+   │ 5        │ Sarah Johnson            │ sarah.j@gmail.com        │
+   │ 8        │ Mike Wilson              │ m.wilson23@gmail.com     │
+   └──────────┴──────────────────────────┴──────────────────────────┘
+   
+   Rows affected: 3
+   
+   ---
+   
+   QUERY:
+   SELECT * FROM Users WHERE Email LIKE '%@company.%';
+   
+   OUTPUT:
+   ┌──────────┬──────────────────────────┬──────────────────────────┐
+   │ UserID   │ UserName                 │ Email                    │
+   ├──────────┼──────────────────────────┼──────────────────────────┤
+   │ 2        │ Emma Davis               │ emma.davis@company.com   │
+   │ 4        │ Robert Brown             │ rbrown@company.net       │
+   │ 7        │ Lisa Anderson            │ l.anderson@company.org   │
+   └──────────┴──────────────────────────┴──────────────────────────┘
+   
+   Rows affected: 3
+
+
+2. SEARCH BY PHONE FORMAT
+   ──────────────────────
+   QUERY:
+   SELECT * FROM Customers WHERE Phone LIKE '(___) ___-____';
+   
+   OUTPUT:
+   ┌────────────┬──────────────────────────┬──────────────────┐
+   │ CustomerID │ CustomerName             │ Phone            │
+   ├────────────┼──────────────────────────┼──────────────────┤
+   │ 2          │ Ana Trujillo             │ (5)555-4729      │
+   │ 3          │ Antonio Moreno           │ (5)555-3932      │
+   │ 4          │ Thomas Hardy             │ (171)555-77      │
+   └────────────┴──────────────────────────┴──────────────────┘
+   
+   Rows affected: 3
+   NOTE: Phone numbers matching format (XXX) XXX-XXXX
+
+
+3. PRODUCT SKU SEARCH
+   ──────────────────
+   QUERY:
+   SELECT * FROM Products WHERE SKU LIKE 'PROD_%';
+   
+   OUTPUT:
+   ┌───────────┬──────────────────────────┬──────────┐
+   │ ProductID │ ProductName              │ SKU      │
+   ├───────────┼──────────────────────────┼──────────┤
+   │ 1         │ Laptop                   │ PROD_001 │
+   │ 2         │ Mouse                    │ PROD_002 │
+   │ 4         │ Keyboard                 │ PROD_004 │
+   │ 6         │ Monitor                  │ PROD_006 │
+   └───────────┴──────────────────────────┴──────────┘
+   
+   Rows affected: 4
+   
+   ---
+   
+   QUERY:
+   SELECT * FROM Products WHERE SKU LIKE 'PROD_____';
+   
+   OUTPUT:
+   ┌───────────┬──────────────────────────┬──────────┐
+   │ ProductID │ ProductName              │ SKU      │
+   ├───────────┼──────────────────────────┼──────────┤
+   │ 1         │ Laptop                   │ PROD_001 │
+   │ 2         │ Mouse                    │ PROD_002 │
+   │ 4         │ Keyboard                 │ PROD_004 │
+   │ 6         │ Monitor                  │ PROD_006 │
+   └───────────┴──────────────────────────┴──────────┘
+   
+   Rows affected: 4
+   (SKUs with exactly 5 digit suffix)
+
+
+4. URL OR WEBSITE SEARCH
+   ──────────────────────
+   QUERY:
+   SELECT * FROM Companies WHERE Website LIKE 'https://%';
+   
+   OUTPUT:
+   ┌─────────────┬──────────────────────────┬─────────────────────────────┐
+   │ CompanyID   │ CompanyName              │ Website                     │
+   ├─────────────┼──────────────────────────┼─────────────────────────────┤
+   │ 1           │ TechCorp                 │ https://www.techcorp.com    │
+   │ 3           │ InnovateLabs             │ https://innovatelabs.io     │
+   │ 5           │ CloudSystems             │ https://cloudsystems.com    │
+   └─────────────┴──────────────────────────┴─────────────────────────────┘
+   
+   Rows affected: 3
+   
+   ---
+   
+   QUERY:
+   SELECT * FROM Companies WHERE Website LIKE '%.com%';
+   
+   OUTPUT:
+   ┌─────────────┬──────────────────────────┬─────────────────────────────┐
+   │ CompanyID   │ CompanyName              │ Website                     │
+   ├─────────────┼──────────────────────────┼─────────────────────────────┤
+   │ 1           │ TechCorp                 │ https://www.techcorp.com    │
+   │ 4           │ DataWorks               │ http://www.dataworks.com    │
+   │ 5           │ CloudSystems             │ https://cloudsystems.com    │
+   │ 7           │ SecurityPlus             │ https://secure.company.com  │
+   └─────────────┴──────────────────────────┴─────────────────────────────┘
+   
+   Rows affected: 4
+
+
+5. USERNAME SEARCH
+   ────────────────
+   QUERY:
+   SELECT * FROM Users WHERE Username LIKE 'admin_%';
+   
+   OUTPUT:
+   ┌──────────┬──────────────────────────┬──────────────┐
+   │ UserID   │ Username                 │ Role         │
+   ├──────────┼──────────────────────────┼──────────────┤
+   │ 1        │ admin_user1              │ Administrator│
+   │ 3        │ admin_support            │ Admin        │
+   │ 6        │ admin_system             │ Admin        │
+   └──────────┴──────────────────────────┴──────────────┘
+   
+   Rows affected: 3
+   
+   ---
+   
+   QUERY:
+   SELECT * FROM Users WHERE Username LIKE '_admin_%';
+   
+   OUTPUT:
+   ┌──────────┬──────────────────────────┬──────────────┐
+   │ UserID   │ Username                 │ Role         │
+   ├──────────┼──────────────────────────┼──────────────┤
+   │ 2        │ super_admin_1            │ Admin        │
+   │ 4        │ lead_admin_team          │ Admin        │
+   │ 7        │ cadmin_support           │ Admin        │
+   └──────────┴──────────────────────────┴──────────────┘
+   
+   Rows affected: 3
+
+
+6. PRODUCT DESCRIPTION SEARCH
+   ───────────────────────────
+   QUERY:
+   SELECT * FROM Products WHERE Description LIKE '%waterproof%';
+   
+   OUTPUT:
+   ┌───────────┬──────────────────────────┬──────────────────────────────┐
+   │ ProductID │ ProductName              │ Description                  │
+   ├───────────┼──────────────────────────┼──────────────────────────────┤
+   │ 10        │ Sport Watch              │ Waterproof digital watch     │
+   │ 15        │ Hiking Jacket            │ Waterproof outdoor jacket    │
+   │ 22        │ Phone Case               │ Waterproof protective case   │
+   └───────────┴──────────────────────────┴──────────────────────────────┘
+   
+   Rows affected: 3
+   
+   ---
+   
+   QUERY:
+   SELECT * FROM Products 
+   WHERE Description LIKE '%durable%' 
+   AND Description LIKE '%lightweight%';
+   
+   OUTPUT:
+   ┌───────────┬──────────────────────────┬──────────────────────────────┐
+   │ ProductID │ ProductName              │ Description                  │
+   ├───────────┼──────────────────────────┼──────────────────────────────┤
+   │ 12        │ Carbon Fiber Backpack    │ Lightweight & durable design │
+   │ 18        │ Aluminum Tripod          │ Durable yet lightweight      │
+   └───────────┴──────────────────────────┴──────────────────────────────┘
+   
+   Rows affected: 2
+   (Products that have BOTH 'durable' AND 'lightweight' in description)
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+⚠️ COMMON MISTAKES TO AVOID
+═══════════════════════════════════════════════════════════════════════════════════
+
+MISTAKE 1: Forgetting wildcards
+   ❌ WRONG:  SELECT * FROM Customers WHERE City LIKE 'berlin';
+   ✓ RIGHT:  SELECT * FROM Customers WHERE City LIKE 'berlin%';
+
+
+MISTAKE 2: Using = instead of LIKE
+   ❌ WRONG:  SELECT * FROM Customers WHERE City = 'ber%';
+   ✓ RIGHT:  SELECT * FROM Customers WHERE City LIKE 'ber%';
+
+
+MISTAKE 3: Incorrect wildcard placement
+   ❌ WRONG:  SELECT * FROM Customers WHERE City LIKE '%berlin';  -- May find "sherlin"
+   ✓ RIGHT:  SELECT * FROM Customers WHERE City LIKE 'berlin%';
+
+
+MISTAKE 4: Mixing % and _ without understanding behavior
+   ❌ CONFUSING: WHERE Name LIKE '_a%b_';
+   ✓ CLEAR:     WHERE Name LIKE '_a%b_';  -- 1st char + 'a' + any chars + 'b' + 1 char
+
+
+MISTAKE 5: Not considering NULL values
+   Remember: NULL values do NOT match wildcard patterns
+   
+   SELECT * FROM Customers WHERE City LIKE 'a%' OR City IS NULL;  -- Include NULLs if needed
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+✨ QUICK REFERENCE GUIDE
+═══════════════════════════════════════════════════════════════════════════════════
+
+Pattern             │ Purpose
+────────────────────┼────────────────────────────────────────────────
+LIKE 'a%'           │ Starts with 'a'
+LIKE '%z'           │ Ends with 'z'
+LIKE '%or%'         │ Contains 'or' anywhere
+LIKE 'a_%_%'        │ Starts with 'a', minimum 3 characters
+LIKE '%a%o'         │ Starts with 'a', ends with 'o'
+LIKE '_ondon'       │ Any single char followed by 'ondon'
+LIKE 'L_n_on'       │ L + any char + n + any char + on
+LIKE '_____'        │ Exactly 5 characters
+LIKE 'a_b'          │ 3 characters: 'a' + any + 'b'
+LIKE '%_st%'        │ Contains any char followed by 'st'
+
+═══════════════════════════════════════════════════════════════════════════════════
+🎓 SUMMARY
+═══════════════════════════════════════════════════════════════════════════════════
+
+• % wildcard: Matches ZERO or MORE characters
+• _ wildcard: Matches EXACTLY ONE character
+• LIKE is case-INSENSITIVE by default
+• Use with WHERE clause for pattern matching
+• Combine wildcards for complex patterns
+• Avoid leading % for better performance
+• Remember that NULL does NOT match wildcards
+• Use ESCAPE clause to search for literal % or _
+
+═══════════════════════════════════════════════════════════════════════════════════
