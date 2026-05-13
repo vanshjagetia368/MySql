@@ -1,0 +1,407 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                       MYSQL BETWEEN OPERATOR - COMPLETE GUIDE                  ║
+║                 Range Filtering, Text, Date, NOT BETWEEN, and Examples         ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════════
+📖 WHAT IS THE BETWEEN OPERATOR?
+═══════════════════════════════════════════════════════════════════════════════════
+
+The BETWEEN operator is used in the WHERE clause to select values within a specified
+range. The range is inclusive, which means both endpoints are included in the results.
+BETWEEN works with numbers, text, and dates.
+
+KEY POINTS:
+• Inclusive range: value1 <= column <= value2
+• Supports numeric, text, and date ranges
+• More readable than multiple comparison conditions
+• Can be combined with other clauses like IN, AND, OR
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🔤 BETWEEN SYNTAX
+═══════════════════════════════════════════════════════════════════════════════════
+
+Basic syntax:
+SELECT column_name(s)
+FROM table_name
+WHERE column_name BETWEEN value1 AND value2;
+
+Negated form:
+SELECT column_name(s)
+FROM table_name
+WHERE column_name NOT BETWEEN value1 AND value2;
+
+Combined form:
+SELECT column_name(s)
+FROM table_name
+WHERE column_name BETWEEN value1 AND value2
+  AND other_column IN (valueA, valueB);
+
+Date form:
+SELECT column_name(s)
+FROM table_name
+WHERE date_column BETWEEN 'YYYY-MM-DD' AND 'YYYY-MM-DD';
+
+Text form:
+SELECT column_name(s)
+FROM table_name
+WHERE text_column BETWEEN 'text1' AND 'text2';
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🗂️ DEMO DATABASE - PRODUCTS TABLE (Northwind)
+═══════════════════════════════════════════════════════════════════════════════════
+
+Sample Products data used in examples:
+
+┌───────────┬──────────────────────────────────────────────┬────────────┬────────────┬───────────────────────────┬────────┐
+│ ProductID │ ProductName                                 │ SupplierID │ CategoryID │ Unit                      │ Price  │
+├───────────┼──────────────────────────────────────────────┼────────────┼────────────┼───────────────────────────┼────────┤
+│ 1         │ Chais                                       │ 1          │ 1          │ 10 boxes x 20 bags        │ 18.00  │
+│ 2         │ Chang                                       │ 1          │ 1          │ 24 - 12 oz bottles        │ 19.00  │
+│ 3         │ Aniseed Syrup                                │ 1          │ 2          │ 12 - 550 ml bottles       │ 10.00  │
+│ 4         │ Chef Anton's Cajun Seasoning                 │ 1          │ 2          │ 48 - 6 oz jars            │ 22.00  │
+│ 5         │ Chef Anton's Gumbo Mix                       │ 1          │ 2          │ 36 boxes                  │ 21.35  │
+└───────────┴──────────────────────────────────────────────┴────────────┴────────────┴───────────────────────────┴────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+✅ BETWEEN EXAMPLES WITH OUTPUTS
+═══════════════════════════════════════════════════════════════════════════════════
+
+═══ EXAMPLE 1: NUMERIC RANGE - PRICE BETWEEN 10 AND 20 ═══
+
+QUERY:
+SELECT * FROM Products
+WHERE Price BETWEEN 10 AND 20;
+
+OUTPUT:
+┌───────────┬──────────────────────────────────────────────┬────────────┬────────────┬───────────────────────────┬────────┐
+│ ProductID │ ProductName                                 │ SupplierID │ CategoryID │ Unit                      │ Price  │
+├───────────┼──────────────────────────────────────────────┼────────────┼────────────┼───────────────────────────┼────────┤
+│ 1         │ Chais                                       │ 1          │ 1          │ 10 boxes x 20 bags        │ 18.00  │
+│ 2         │ Chang                                       │ 1          │ 1          │ 24 - 12 oz bottles        │ 19.00  │
+│ 3         │ Aniseed Syrup                                │ 1          │ 2          │ 12 - 550 ml bottles       │ 10.00  │
+└───────────┴──────────────────────────────────────────────┴────────────┴────────────┴───────────────────────────┴────────┘
+
+Rows affected: 3
+
+EXPLANATION:
+• Includes prices 10.00, 18.00, 19.00
+• Excludes prices above 20.00 and below 10.00
+
+
+═══ EXAMPLE 2: NEGATED RANGE - PRICE NOT BETWEEN 10 AND 20 ═══
+
+QUERY:
+SELECT * FROM Products
+WHERE Price NOT BETWEEN 10 AND 20;
+
+OUTPUT:
+┌───────────┬──────────────────────────────────────────────┬────────────┬────────────┬───────────────────────────┬────────┐
+│ ProductID │ ProductName                                 │ SupplierID │ CategoryID │ Unit                      │ Price  │
+├───────────┼──────────────────────────────────────────────┼────────────┼────────────┼───────────────────────────┼────────┤
+│ 4         │ Chef Anton's Cajun Seasoning                 │ 1          │ 2          │ 48 - 6 oz jars            │ 22.00  │
+│ 5         │ Chef Anton's Gumbo Mix                       │ 1          │ 2          │ 36 boxes                  │ 21.35  │
+└───────────┴──────────────────────────────────────────────┴────────────┴────────────┴───────────────────────────┴────────┘
+
+Rows affected: 2
+
+EXPLANATION:
+• Returns values outside the inclusive range 10 to 20
+
+
+═══ EXAMPLE 3: BETWEEN WITH IN COMBINATION ═══
+
+QUERY:
+SELECT * FROM Products
+WHERE Price BETWEEN 10 AND 20
+  AND CategoryID IN (1, 2, 3);
+
+OUTPUT:
+┌───────────┬──────────────────────────────────────────────┬────────────┬────────────┬───────────────────────────┬────────┐
+│ ProductID │ ProductName                                 │ SupplierID │ CategoryID │ Unit                      │ Price  │
+├───────────┼──────────────────────────────────────────────┼────────────┼────────────┼───────────────────────────┼────────┤
+│ 1         │ Chais                                       │ 1          │ 1          │ 10 boxes x 20 bags        │ 18.00  │
+│ 2         │ Chang                                       │ 1          │ 1          │ 24 - 12 oz bottles        │ 19.00  │
+│ 3         │ Aniseed Syrup                                │ 1          │ 2          │ 12 - 550 ml bottles       │ 10.00  │
+└───────────┴──────────────────────────────────────────────┴────────────┴────────────┴───────────────────────────┴────────┘
+
+Rows affected: 3
+
+EXPLANATION:
+• Filters by price range and then restricts category IDs
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🔤 TEXT VALUE BETWEEN EXAMPLES
+═══════════════════════════════════════════════════════════════════════════════════
+
+Explanation:
+• Text BETWEEN uses alphabetical order based on collation
+• It includes both boundary strings
+
+═══ EXAMPLE 4: PRODUCT NAME BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni' ═══
+
+QUERY:
+SELECT * FROM Products
+WHERE ProductName BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
+ORDER BY ProductName;
+
+OUTPUT (Hypothetical Selection):
+┌───────────┬──────────────────────────────────────────────┬────────────┬────────────┬───────────────────────────┬────────┐
+│ ProductID │ ProductName                                 │ SupplierID │ CategoryID │ Unit                      │ Price  │
+├───────────┼──────────────────────────────────────────────┼────────────┼────────────┼───────────────────────────┼────────┤
+│ 13        │ Carnarvon Tigers                            │ 2          │ 3          │ 16 kg pkg                 │ 62.50  │
+│ 14        │ Escargots de Bourgogne                      │ 1          │ 8          │ 24 - 12 oz cans           │ 13.25  │
+│ 15        │ Filo Mix                                    │ 2          │ 5          │ 24 - 16 oz pkgs           │ 23.25  │
+│ 16        │ Mozzarella di Giovanni                      │ 3          │ 4          │ 24 - 200 g pkgs           │ 34.80  │
+└───────────┴──────────────────────────────────────────────┴────────────┴────────────┴───────────────────────────┴────────┘
+
+Rows affected: 4
+
+EXPLANATION:
+• All names alphabetically between the two values, inclusive
+
+
+═══ EXAMPLE 5: PRODUCT NAME BETWEEN 'Carnarvon Tigers' AND "Chef Anton's Cajun Seasoning" ═══
+
+QUERY:
+SELECT * FROM Products
+WHERE ProductName BETWEEN 'Carnarvon Tigers' AND "Chef Anton's Cajun Seasoning"
+ORDER BY ProductName;
+
+OUTPUT (Hypothetical Selection):
+┌───────────┬──────────────────────────────────────────────┬────────────┬────────────┬───────────────────────────┬────────┐
+│ ProductID │ ProductName                                 │ SupplierID │ CategoryID │ Unit                      │ Price  │
+├───────────┼──────────────────────────────────────────────┼────────────┼────────────┼───────────────────────────┼────────┤
+│ 13        │ Carnarvon Tigers                            │ 2          │ 3          │ 16 kg pkg                 │ 62.50  │
+│ 4         │ Chef Anton's Cajun Seasoning                 │ 1          │ 2          │ 48 - 6 oz jars            │ 22.00  │
+└───────────┴──────────────────────────────────────────────┴────────────┴────────────┴───────────────────────────┴────────┘
+
+Rows affected: 2
+
+EXPLANATION:
+• Text range is evaluated lexicographically using the column collation
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🚫 NOT BETWEEN TEXT EXAMPLES
+═══════════════════════════════════════════════════════════════════════════════════
+
+═══ EXAMPLE 6: PRODUCT NAME NOT BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni' ═══
+
+QUERY:
+SELECT * FROM Products
+WHERE ProductName NOT BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
+ORDER BY ProductName;
+
+OUTPUT (Hypothetical Selection):
+┌───────────┬──────────────────────────────────────────────┬────────────┬────────────┬───────────────────────────┬────────┐
+│ ProductID │ ProductName                                 │ SupplierID │ CategoryID │ Unit                      │ Price  │
+├───────────┼──────────────────────────────────────────────┼────────────┼────────────┼───────────────────────────┼────────┤
+│ 1         │ Chais                                       │ 1          │ 1          │ 10 boxes x 20 bags        │ 18.00  │
+│ 2         │ Chang                                       │ 1          │ 1          │ 24 - 12 oz bottles        │ 19.00  │
+│ 3         │ Aniseed Syrup                                │ 1          │ 2          │ 12 - 550 ml bottles       │ 10.00  │
+│ 5         │ Chef Anton's Gumbo Mix                       │ 1          │ 2          │ 36 boxes                  │ 21.35  │
+└───────────┴──────────────────────────────────────────────┴────────────┴────────────┴───────────────────────────┴────────┘
+
+Rows affected: 4
+
+EXPLANATION:
+• Excludes names inside the given text range
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🗓️ DATE RANGE EXAMPLES
+═══════════════════════════════════════════════════════════════════════════════════
+
+Sample Orders data:
+
+┌──────────┬────────────┬────────────┬────────────┬───────────┐
+│ OrderID  │ CustomerID │ EmployeeID │ OrderDate  │ ShipperID │
+├──────────┼────────────┼────────────┼────────────┼───────────┤
+│ 10248    │ 90         │ 5          │ 1996-07-04 │ 3         │
+│ 10249    │ 81         │ 6          │ 1996-07-05 │ 1         │
+│ 10250    │ 34         │ 4          │ 1996-07-08 │ 2         │
+│ 10251    │ 84         │ 3          │ 1996-07-08 │ 1         │
+│ 10252    │ 76         │ 4          │ 1996-07-09 │ 2         │
+└──────────┴────────────┴────────────┴────────────┴───────────┘
+
+═══ EXAMPLE 7: DATE RANGE FOR JULY 1996 ═══
+
+QUERY:
+SELECT * FROM Orders
+WHERE OrderDate BETWEEN '1996-07-01' AND '1996-07-31';
+
+OUTPUT:
+┌──────────┬────────────┬────────────┬────────────┬───────────┐
+│ OrderID  │ CustomerID │ EmployeeID │ OrderDate  │ ShipperID │
+├──────────┼────────────┼────────────┼────────────┼───────────┤
+│ 10248    │ 90         │ 5          │ 1996-07-04 │ 3         │
+│ 10249    │ 81         │ 6          │ 1996-07-05 │ 1         │
+│ 10250    │ 34         │ 4          │ 1996-07-08 │ 2         │
+│ 10251    │ 84         │ 3          │ 1996-07-08 │ 1         │
+│ 10252    │ 76         │ 4          │ 1996-07-09 │ 2         │
+└──────────┴────────────┴────────────┴────────────┴───────────┘
+
+Rows affected: 5
+
+EXPLANATION:
+• Includes all dates from July 1 to July 31 inclusive
+• Use the same date format as stored in the database
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+📌 ADDITIONAL BETWEEN USE CASES
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. SELECT PRODUCTS WITH PRICE BETWEEN 15 AND 25 AND CATEGORY 2
+QUERY:
+SELECT ProductID, ProductName, Price, CategoryID
+FROM Products
+WHERE Price BETWEEN 15 AND 25
+  AND CategoryID = 2;
+
+OUTPUT (Hypothetical Selection):
+┌───────────┬──────────────────────────────────────────────┬────────┬────────────┐
+│ ProductID │ ProductName                                 │ Price  │ CategoryID │
+├───────────┼──────────────────────────────────────────────┼────────┼────────────┤
+│ 3         │ Aniseed Syrup                                │ 10.00  │ 2          │
+│ 4         │ Chef Anton's Cajun Seasoning                 │ 22.00  │ 2          │
+│ 5         │ Chef Anton's Gumbo Mix                       │ 21.35  │ 2          │
+└───────────┴──────────────────────────────────────────────┴────────┴────────────┘
+
+Rows affected: 3
+
+2. SELECT ORDERS BETWEEN TWO DATES EXCLUDING WEEKENDS
+QUERY:
+SELECT OrderID, OrderDate
+FROM Orders
+WHERE OrderDate BETWEEN '1996-07-01' AND '1996-07-31'
+  AND DAYOFWEEK(OrderDate) NOT IN (1, 7);
+
+OUTPUT (Hypothetical Selection):
+┌──────────┬────────────┐
+│ OrderID  │ OrderDate  │
+├──────────┼────────────┤
+│ 10248    │ 1996-07-04 │
+│ 10249    │ 1996-07-05 │
+│ 10250    │ 1996-07-08 │
+│ 10251    │ 1996-07-08 │
+│ 10252    │ 1996-07-09 │
+└──────────┴────────────┘
+
+Rows affected: 5
+
+3. SELECT PRODUCT NAMES BETWEEN TWO STRINGS USING LIKE AND BETWEEN
+QUERY:
+SELECT ProductID, ProductName
+FROM Products
+WHERE ProductName BETWEEN 'A' AND 'C'
+  AND ProductName LIKE 'C%';
+
+OUTPUT (Hypothetical Selection):
+┌───────────┬──────────────────────────────────────────────┐
+│ ProductID │ ProductName                                 │
+├───────────┼──────────────────────────────────────────────┤
+│ 1         │ Chais                                       │
+│ 2         │ Chang                                       │
+│ 4         │ Chef Anton's Cajun Seasoning                 │
+│ 5         │ Chef Anton's Gumbo Mix                       │
+└───────────┴──────────────────────────────────────────────┘
+
+Rows affected: 4
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+💡 BEST PRACTICES AND NOTES
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. INCLUSIVE RANGE:
+   • BETWEEN includes both endpoints
+   • Equivalent: column BETWEEN a AND b is same as column >= a AND column <= b
+
+2. DATA TYPE MATCHING:
+   • Use the correct type for the boundary values
+   • Numeric range: BETWEEN 10 AND 20
+   • Date range: BETWEEN '1996-07-01' AND '1996-07-31'
+   • Text range: BETWEEN 'A' AND 'Z'
+
+3. TEXT ORDERING:
+   • Text BETWEEN uses collation rules for alphabetical sorting
+   • Make sure the strings are in correct lexicographic order
+
+4. NULL VALUES:
+   • BETWEEN excludes NULL values
+   • Use IS NULL if you want to include null records separately
+
+5. NOT BETWEEN AND NULL:
+   • A NULL boundary or NULL column value may produce no rows
+   • Example: WHERE Price NOT BETWEEN 10 AND NULL returns unknown
+
+6. PERFORMANCE:
+   • BETWEEN is usually efficient on indexed numeric and date columns
+   • It is equivalent to two range comparisons
+
+7. COMBINING WITH OTHER CONDITIONS:
+   • BETWEEN works well with IN, LIKE, AND, OR, and joins
+   • Example: WHERE Price BETWEEN 10 AND 20 AND CategoryID IN (1,2,3)
+
+8. DATE RANGE INCLUSIVITY:
+   • For date/time fields with time parts, include the end-of-day if needed
+   • Example: WHERE created_at BETWEEN '2024-05-01' AND '2024-05-31 23:59:59'
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+⚠️ COMMON BETWEEN OPERATOR MISTAKES
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. Reversed boundaries:
+   ❌ WRONG: WHERE Price BETWEEN 20 AND 10
+   ❌ RESULT: No rows returned
+   ✓ CORRECT: WHERE Price BETWEEN 10 AND 20
+
+2. Using VARCHAR dates with wrong format:
+   ❌ WRONG: WHERE OrderDate BETWEEN '07-01-1996' AND '07-31-1996'
+   ✓ CORRECT: WHERE OrderDate BETWEEN '1996-07-01' AND '1996-07-31'
+
+3. Assuming NOT BETWEEN returns only values outside range but includes NULL:
+   ❌ WRONG: WHERE Price NOT BETWEEN 10 AND 20
+   • NULL values are not returned unless explicitly included with OR Price IS NULL
+
+4. Using BETWEEN for non-sequential text values:
+   ❌ WRONG: WHERE ProductName BETWEEN 'Z' AND 'A'
+   ✓ CORRECT: WHERE ProductName BETWEEN 'A' AND 'Z'
+
+5. Ignoring time when filtering datetime columns:
+   ❌ WRONG: WHERE created_at BETWEEN '2024-05-01' AND '2024-05-31'
+   • This may exclude rows on 2024-05-31 with time > 00:00:00
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🎓 QUICK REFERENCE
+═══════════════════════════════════════════════════════════════════════════════════
+
+Pattern                                  │ Meaning
+──────────────────────────────────────────┼────────────────────────────────────────────────────
+column BETWEEN x AND y                  │ value is between x and y, inclusive
+column NOT BETWEEN x AND y              │ value is outside the range x..y
+text_column BETWEEN 'A' AND 'M'         │ text falls alphabetically between A and M
+date_column BETWEEN '2024-01-01' AND '2024-12-31' │ dates in year 2024
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+SUMMARY
+═══════════════════════════════════════════════════════════════════════════════════
+
+• BETWEEN selects values inside an inclusive range.
+• Helpful for numeric, text, and date filtering.
+• NOT BETWEEN selects values outside that range.
+• Use correct data types and formats.
+• Combine with IN and other conditions for stronger filtering.
+• Handle NULL values explicitly.
+• Good for readable, maintainable range queries.
+
+═══════════════════════════════════════════════════════════════════════════════════

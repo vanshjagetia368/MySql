@@ -1,0 +1,426 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                            MYSQL ALIASES - COMPLETE GUIDE                     ║
+║           Column aliases, table aliases, alias formatting, and query outputs   ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════════
+📖 WHAT IS AN ALIAS?
+═══════════════════════════════════════════════════════════════════════════════════
+
+An alias is a temporary name given to a column or table within a SQL query. Aliases
+improve readability and can make expressions easier to reference. Aliases only exist
+for the duration of the query.
+
+TWO MAIN TYPES OF ALIASES:
+• Column aliases: rename query output columns
+• Table aliases: shorten table references and clarify joins
+
+USAGE:
+• In SELECT lists to rename columns
+• In JOINs to shorten table references
+• In expressions and functions to label results
+• In subqueries as temporary table names
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🔤 ALIAS SYNTAX
+═══════════════════════════════════════════════════════════════════════════════════
+
+Column alias syntax:
+SELECT column_name AS alias_name
+FROM table_name;
+
+Table alias syntax:
+SELECT column_name(s)
+FROM table_name AS alias_name;
+
+Note: AS is optional in most cases.
+SELECT column_name alias_name FROM table_name;
+SELECT table_name alias_name
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🗂️ SAMPLE DATABASE - CUSTOMERS TABLE
+═══════════════════════════════════════════════════════════════════════════════════
+
+Sample data from the Northwind Customers table:
+
+┌────────────┬─────────────────────────────────┬──────────────────┬───────────────────────────────┬──────────────┬──────────────┬──────────────┐
+│ CustomerID │ CustomerName                    │ ContactName      │ Address                       │ City         │ PostalCode   │ Country      │
+├────────────┼─────────────────────────────────┼──────────────────┼───────────────────────────────┼──────────────┼──────────────┼──────────────┤
+│ 1          │ Alfreds Futterkiste             │ Maria Anders     │ Obere Str. 57                 │ Berlin       │ 12209        │ Germany      │
+│ 2          │ Ana Trujillo Emparedados        │ Ana Trujillo     │ Avda. de la Constitución 2222 │ México D.F.  │ 05021        │ Mexico       │
+│ 3          │ Antonio Moreno Taquería         │ Antonio Moreno   │ Mataderos 2312                │ México D.F.  │ 05023        │ Mexico       │
+│ 4          │ Around the Horn                 │ Thomas Hardy     │ 120 Hanover Sq.               │ London       │ WA1 1DP      │ UK           │
+│ 5          │ Berglunds snabbköp              │ Christina        │ Berguvsvägen 8                │ Luleå        │ S-958 22     │ Sweden       │
+└────────────┴─────────────────────────────────┴──────────────────┴───────────────────────────────┴──────────────┴──────────────┴──────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+✅ COLUMN ALIASES
+═══════════════════════════════════════════════════════════════════════════════════
+
+Aliases make result columns easier to read, especially when using functions or long
+column names.
+
+EXAMPLE 1: SIMPLE COLUMN ALIASES
+────────────────────────────────
+QUERY:
+SELECT CustomerID AS ID, CustomerName AS Customer
+FROM Customers;
+
+OUTPUT:
+┌────┬──────────────────────────┐
+│ ID │ Customer                 │
+├────┼──────────────────────────┤
+│ 1  │ Alfreds Futterkiste      │
+│ 2  │ Ana Trujillo Emparedados │
+│ 3  │ Antonio Moreno Taquería  │
+│ 4  │ Around the Horn          │
+│ 5  │ Berglunds snabbköp       │
+└────┴──────────────────────────┘
+
+Rows affected: 5
+
+EXPLANATION:
+• The query output columns are renamed to ID and Customer.
+• Aliases only affect the display, not the underlying table.
+
+
+EXAMPLE 2: ALIASES WITH SPACES
+────────────────────────────────
+QUERY:
+SELECT CustomerName AS Customer, ContactName AS "Contact Person"
+FROM Customers;
+
+OUTPUT:
+┌──────────────────────────┬─────────────────────┐
+│ Customer                 │ Contact Person      │
+├──────────────────────────┼─────────────────────┤
+│ Alfreds Futterkiste      │ Maria Anders        │
+│ Ana Trujillo Emparedados │ Ana Trujillo        │
+│ Antonio Moreno Taquería  │ Antonio Moreno      │
+│ Around the Horn          │ Thomas Hardy        │
+│ Berglunds snabbköp       │ Christina           │
+└──────────────────────────┴─────────────────────┘
+
+Rows affected: 5
+
+EXPLANATION:
+• Use quotes for aliases containing spaces or special characters.
+• Single quotes also work depending on SQL mode: AS 'Contact Person'.
+
+
+EXAMPLE 3: ALIAS FOR EXPRESSION
+────────────────────────────────
+QUERY:
+SELECT CustomerName,
+       CONCAT_WS(', ', Address, PostalCode, City, Country) AS AddressLine
+FROM Customers;
+
+OUTPUT:
+┌──────────────────────────┬──────────────────────────────────────────────────────────────┐
+│ CustomerName             │ AddressLine                                                   │
+├──────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ Alfreds Futterkiste      │ Obere Str. 57, 12209, Berlin, Germany                         │
+│ Ana Trujillo Emparedados │ Avda. de la Constitución 2222, 05021, México D.F., Mexico      │
+│ Antonio Moreno Taquería  │ Mataderos 2312, 05023, México D.F., Mexico                    │
+│ Around the Horn          │ 120 Hanover Sq., WA1 1DP, London, UK                          │
+│ Berglunds snabbköp       │ Berguvsvägen 8, S-958 22, Luleå, Sweden                       │
+└──────────────────────────┴──────────────────────────────────────────────────────────────┘
+
+Rows affected: 5
+
+EXPLANATION:
+• Aliases are especially useful for expression results.
+• AddressLine labels the generated string.
+
+
+EXAMPLE 4: FUNCTION ALIAS
+────────────────────────────────
+QUERY:
+SELECT CustomerName,
+       LENGTH(CustomerName) AS NameLength,
+       UPPER(Country) AS CountryUpper
+FROM Customers;
+
+OUTPUT:
+┌──────────────────────────┬────────────┬───────────────┐
+│ CustomerName             │ NameLength │ CountryUpper  │
+├──────────────────────────┼────────────┼───────────────┤
+│ Alfreds Futterkiste      │ 19         │ GERMANY       │
+│ Ana Trujillo Emparedados │ 26         │ MEXICO        │
+│ Antonio Moreno Taquería  │ 22         │ MEXICO        │
+│ Around the Horn          │ 15         │ UK            │
+│ Berglunds snabbköp       │ 16         │ SWEDEN        │
+└──────────────────────────┴────────────┴───────────────┘
+
+Rows affected: 5
+
+EXPLANATION:
+• Aliases label function results and make output self-documenting.
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🏷️ TABLE ALIASES
+═══════════════════════════════════════════════════════════════════════════════════
+
+Table aliases shorten references and are essential when joining multiple tables.
+
+EXAMPLE 5: SIMPLE TABLE ALIAS
+────────────────────────────────
+QUERY:
+SELECT c.CustomerID, c.CustomerName, c.City
+FROM Customers AS c;
+
+OUTPUT:
+┌────────────┬──────────────────────────┬──────────────┐
+│ CustomerID │ CustomerName             │ City         │
+├────────────┼──────────────────────────┼──────────────┤
+│ 1          │ Alfreds Futterkiste      │ Berlin       │
+│ 2          │ Ana Trujillo Emparedados │ México D.F.  │
+│ 3          │ Antonio Moreno Taquería  │ México D.F.  │
+│ 4          │ Around the Horn          │ London       │
+│ 5          │ Berglunds snabbköp       │ Luleå        │
+└────────────┴──────────────────────────┴──────────────┘
+
+Rows affected: 5
+
+EXPLANATION:
+• The Customers table is aliased as c.
+• The alias is used to prefix columns in the SELECT list.
+
+
+EXAMPLE 6: JOIN WITH TABLE ALIASES
+────────────────────────────────
+QUERY:
+SELECT o.OrderID, o.OrderDate, c.CustomerName
+FROM Customers AS c, Orders AS o
+WHERE c.CustomerName='Around the Horn'
+  AND c.CustomerID=o.CustomerID;
+
+OUTPUT (Hypothetical):
+┌──────────┬────────────┬──────────────────┐
+│ OrderID  │ OrderDate  │ CustomerName     │
+├──────────┼────────────┼──────────────────┤
+│ 10250    │ 1996-07-08 │ Around the Horn  │
+└──────────┴────────────┴──────────────────┘
+
+Rows affected: 1
+
+EXPLANATION:
+• Table aliases c and o make the query shorter.
+• Aliases are essential if multiple tables share column names.
+
+
+EXAMPLE 7: SAME QUERY WITHOUT ALIASES
+────────────────────────────────
+QUERY:
+SELECT Orders.OrderID, Orders.OrderDate, Customers.CustomerName
+FROM Customers, Orders
+WHERE Customers.CustomerName='Around the Horn'
+  AND Customers.CustomerID=Orders.CustomerID;
+
+OUTPUT (Hypothetical):
+┌──────────┬────────────┬──────────────────┐
+│ OrderID  │ OrderDate  │ CustomerName     │
+├──────────┼────────────┼──────────────────┤
+│ 10250    │ 1996-07-08 │ Around the Horn  │
+└──────────┴────────────┴──────────────────┘
+
+Rows affected: 1
+
+EXPLANATION:
+• Without aliases, table names are longer and more verbose.
+• Aliases improve readability in joins.
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🔗 ALIASES WITH SUBQUERIES
+═══════════════════════════════════════════════════════════════════════════════════
+
+EXAMPLE 8: SUBQUERY ALIAS
+────────────────────────────────
+QUERY:
+SELECT x.CustomerID, x.CustomerName, x.Country
+FROM (
+  SELECT CustomerID, CustomerName, Country
+  FROM Customers
+  WHERE Country = 'Mexico'
+) AS x;
+
+OUTPUT:
+┌────────────┬──────────────────────────┬──────────────┐
+│ CustomerID │ CustomerName             │ Country      │
+├────────────┼──────────────────────────┼──────────────┤
+│ 2          │ Ana Trujillo Emparedados │ Mexico       │
+│ 3          │ Antonio Moreno Taquería  │ Mexico       │
+└────────────┴──────────────────────────┴──────────────┘
+
+Rows affected: 2
+
+EXPLANATION:
+• The derived table is given alias x.
+• Column references in the outer query use that alias.
+
+
+EXAMPLE 9: TABLE ALIAS WITH JOIN AND ALIASED COLUMNS
+────────────────────────────────
+QUERY:
+SELECT c.CustomerName AS Customer,
+       o.OrderID AS OrderNumber,
+       o.OrderDate AS "Order Date"
+FROM Customers AS c
+JOIN Orders AS o ON c.CustomerID = o.CustomerID
+WHERE c.Country = 'UK';
+
+OUTPUT (Hypothetical):
+┌──────────────────┬────────────┬──────────────┐
+│ Customer         │ OrderNumber│ Order Date   │
+├──────────────────┼────────────┼──────────────┤
+│ Around the Horn  │ 10251      │ 1996-07-08   │
+└──────────────────┴────────────┴──────────────┘
+
+Rows affected: 1
+
+EXPLANATION:
+• Both tables and columns are aliased.
+• Output headers are clean and descriptive.
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+💡 ADVANCED ALIAS EXAMPLES
+═══════════════════════════════════════════════════════════════════════════════════
+
+EXAMPLE 10: ALIASING A COMPLEX EXPRESSION
+────────────────────────────────
+QUERY:
+SELECT CustomerName,
+       CASE WHEN Country = 'UK' THEN 'United Kingdom'
+            ELSE Country
+       END AS CountryDescription
+FROM Customers;
+
+OUTPUT:
+┌──────────────────────────┬───────────────────────┐
+│ CustomerName             │ CountryDescription    │
+├──────────────────────────┼───────────────────────┤
+│ Alfreds Futterkiste      │ Germany               │
+│ Ana Trujillo Emparedados │ Mexico                │
+│ Antonio Moreno Taquería  │ Mexico                │
+│ Around the Horn          │ United Kingdom        │
+│ Berglunds snabbköp       │ Sweden                │
+└──────────────────────────┴───────────────────────┘
+
+Rows affected: 5
+
+EXPLANATION:
+• Complex CASE expressions become readable with aliases.
+
+
+EXAMPLE 11: ALIASING AN AGGREGATE FUNCTION
+────────────────────────────────
+QUERY:
+SELECT Country,
+       COUNT(*) AS CustomerCount
+FROM Customers
+GROUP BY Country;
+
+OUTPUT:
+┌──────────┬───────────────┐
+│ Country  │ CustomerCount │
+├──────────┼───────────────┤
+│ Germany  │ 1             │
+│ Mexico   │ 2             │
+│ Sweden   │ 1             │
+│ UK       │ 1             │
+└──────────┴───────────────┘
+
+Rows affected: 4
+
+EXPLANATION:
+• Aggregation results must use aliases for clear column names.
+
+
+EXAMPLE 12: ALIAS WITHOUT AS
+────────────────────────────────
+QUERY:
+SELECT CustomerID ID, CustomerName Customer
+FROM Customers;
+
+OUTPUT:
+┌────┬──────────────────────────┐
+│ ID │ Customer                 │
+├────┼──────────────────────────┤
+│ 1  │ Alfreds Futterkiste      │
+│ 2  │ Ana Trujillo Emparedados │
+│ 3  │ Antonio Moreno Taquería  │
+│ 4  │ Around the Horn          │
+│ 5  │ Berglunds snabbköp       │
+└────┴──────────────────────────┘
+
+Rows affected: 5
+
+EXPLANATION:
+• AS is optional, but using AS improves readability.
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+⚠️ WHEN TO USE ALIASES
+═══════════════════════════════════════════════════════════════════════════════════
+
+Aliases are useful when:
+• Multiple tables are involved in a query
+• Functions or expressions produce new columns
+• Column names are long or unclear
+• Two or more columns use the same name
+• You want clean output headers for reporting
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+⚙️ BEST PRACTICES
+═══════════════════════════════════════════════════════════════════════════════════
+
+1. Use AS for clarity:
+   SELECT column_name AS alias_name
+2. Use quotes for aliases with spaces:
+   SELECT column_name AS "Alias Name"
+3. Keep aliases short but meaningful:
+   SELECT CustomerName AS Name
+4. Use table aliases in multi-table joins:
+   FROM Customers AS c JOIN Orders AS o ON c.CustomerID=o.CustomerID
+5. Avoid alias names that duplicate reserved words or column names.
+6. Refer to aliases only in the outer SELECT list, not in the same SELECT clause expression.
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+📌 QUICK REFERENCE
+═══════════════════════════════════════════════════════════════════════════════════
+
+Column alias:
+SELECT CustomerID AS ID FROM Customers;
+
+Table alias:
+SELECT c.CustomerID FROM Customers AS c;
+
+Expression alias:
+SELECT CONCAT(FirstName, ' ', LastName) AS FullName FROM Customers;
+
+Join with aliases:
+SELECT c.CustomerName, o.OrderID
+FROM Customers AS c
+JOIN Orders AS o ON c.CustomerID=o.CustomerID;
+
+
+═══════════════════════════════════════════════════════════════════════════════════
+🎓 SUMMARY
+═══════════════════════════════════════════════════════════════════════════════════
+
+• Aliases simplify query results and make SQL more readable.
+• Column aliases rename output columns, table aliases shorten references.
+• AS is optional but recommended.
+• Quotes are required for aliases with spaces.
+• Use aliases with expressions, functions, joins, and subqueries.
+• Aliases last only for the current query.
+
+═══════════════════════════════════════════════════════════════════════════════════
