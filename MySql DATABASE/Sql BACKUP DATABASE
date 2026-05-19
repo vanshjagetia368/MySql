@@ -1,0 +1,71 @@
+SQL BACKUP DATABASE Statement
+
+The BACKUP DATABASE statement is used in SQL Server to create a backup copy of an existing SQL database.
+
+This command is important for protecting data and recovering from hardware failure, accidental deletion, or corruption.
+
+Important:
+- BACKUP DATABASE is an SQL Server statement, not a MySQL command.
+- Backups are stored as files, typically with the `.bak` extension.
+- Keep backup files on a different drive or server than the original database when possible.
+
+Full Backup Syntax
+BACKUP DATABASE database_name
+TO DISK = 'file_path';
+
+Full Backup Example
+The following SQL creates a full backup of the database `testDB` to the D drive:
+
+Example:
+BACKUP DATABASE testDB
+TO DISK = 'D:\backups\testDB.bak';
+
+Tips for full backups:
+- Use a separate disk or storage location to protect against disk failure.
+- Full backups include the entire database, including tables, stored procedures, views, and security settings.
+- A full backup can be restored independently.
+
+Differential Backup
+A differential backup only includes changes made since the last full backup.
+This is useful when you want faster backups and smaller backup files.
+
+Differential Backup Syntax
+BACKUP DATABASE database_name
+TO DISK = 'file_path'
+WITH DIFFERENTIAL;
+
+Differential Backup Example
+The following SQL creates a differential backup of the database `testDB`:
+
+Example:
+BACKUP DATABASE testDB
+TO DISK = 'D:\backups\testDB.bak'
+WITH DIFFERENTIAL;
+
+Important notes for differential backups:
+- A differential backup requires at least one previous full backup.
+- Differential backups are typically faster than full backups.
+- To restore from a differential backup, you first restore the last full backup, then restore the differential backup.
+
+Additional Options
+- `WITH INIT`: Overwrites existing backup files.
+- `WITH NOFORMAT`: Appends the backup to an existing media set.
+- `WITH COMPRESSION`: Compresses the backup file to save space (if supported).
+- `WITH COPY_ONLY`: Creates a backup that does not affect the normal backup sequence.
+
+Example with additional options:
+BACKUP DATABASE testDB
+TO DISK = 'D:\backups\testDB.bak'
+WITH DIFFERENTIAL, COMPRESSION, INIT;
+
+Human-friendly explanation
+Think of a full backup as a complete snapshot of your database at a point in time. A differential backup is like saving only the changes made since your last full snapshot.
+
+Exercise Question
+Which SQL statement creates a full backup of a database named `myDB`?
+- Correct answer: `BACKUP DATABASE myDB TO DISK = 'C:\backups\myDB.bak';`
+
+Why the other choices are wrong:
+- `BACKUP DATABASE myDB TO FILE = 'C:\backups\myDB.bak';` is incorrect syntax for SQL Server.
+- `BACKUP DATABASE myDB WITH DIFFERENTIAL;` creates a differential backup, not a full backup.
+- `SAVE DATABASE myDB TO 'C:\backups\myDB.bak';` is not a valid SQL Server command.

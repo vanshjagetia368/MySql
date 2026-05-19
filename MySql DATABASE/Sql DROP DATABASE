@@ -1,0 +1,61 @@
+SQL DROP DATABASE Statement
+
+The SQL DROP DATABASE statement is used to permanently delete an existing SQL database.
+
+Note: Be careful before dropping a database! Dropping a database deletes the database and all its content (tables, views, stored procedures, and data).
+
+Syntax
+DROP DATABASE database_name;
+
+MySQL Syntax
+DROP DATABASE database_name;
+
+SQL Server Syntax
+DROP DATABASE database_name;
+
+DROP DATABASE Example
+The following SQL statement drops an existing database named "testDB":
+
+Example:
+DROP DATABASE testDB;
+
+Detailed Notes
+- `DROP DATABASE` removes the entire database and all objects inside it.
+- This operation is irreversible in most systems unless you have a backup.
+- Administrative privileges or database-level permissions are usually required.
+- In MySQL, if the database does not exist, the statement will return an error unless you use `DROP DATABASE IF EXISTS database_name;`.
+- In SQL Server, you may need to set the database to single-user mode or ensure no active connections before dropping it.
+- Always verify the database name before running this command to avoid accidental data loss.
+
+MySQL Example with IF EXISTS:
+DROP DATABASE IF EXISTS testDB;
+
+SQL Server Example with single user mode and drop:
+ALTER DATABASE testDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE testDB;
+
+Show Databases After Drop
+MySQL:
+SHOW DATABASES;
+
+SQL Server:
+SELECT name FROM sys.databases;
+
+Common Uses
+- Remove a test or development database that is no longer needed.
+- Delete a database for a decommissioned application.
+- Clear space on the server by removing unused databases.
+
+Warnings
+- Do not use `DROP DATABASE` on production databases unless you are certain.
+- Back up any important data before executing the command.
+- Dropping a database also removes permissions, users, and referenced objects associated with that database.
+
+Exercise Question
+What is the purpose of the SQL DROP DATABASE statement?
+- To delete an existing database
+
+Incorrect answers:
+- To delete a table from a database (wrong)
+- To delete all records in a table (wrong)
+- To delete specific rows from a database (wrong)

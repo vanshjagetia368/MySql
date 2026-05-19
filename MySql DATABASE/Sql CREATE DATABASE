@@ -1,0 +1,72 @@
+SQL CREATE DATABASE Statement
+
+The SQL CREATE DATABASE statement is used to create a new SQL database.
+
+Tip: You need administrative privileges to create a new database.
+
+Syntax
+CREATE DATABASE database_name;
+
+MySQL Syntax
+CREATE DATABASE database_name;
+
+SQL Server Syntax
+CREATE DATABASE database_name;
+
+CREATE DATABASE Example
+The following SQL statement creates a database called "testDB":
+
+Example:
+CREATE DATABASE testDB;
+
+After the database is created, you can verify it exists by listing databases.
+
+Show Databases
+MySQL:
+SHOW DATABASES;
+
+SQL Server:
+SELECT name FROM sys.databases;
+
+Detailed Notes
+- `CREATE DATABASE` creates a new logical database container.
+- The database is empty when created, with no tables or data.
+- The command usually requires administrative privileges or a user account with database creation rights.
+- In some systems, the database name must follow identifier rules (no spaces, no special characters, avoid reserved words).
+- In MySQL, you can add optional character set and collation settings:
+  CREATE DATABASE testDB CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+- In SQL Server, you can specify file locations and size options:
+  CREATE DATABASE testDB
+  ON PRIMARY (
+      NAME = testDB_data,
+      FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\testDB.mdf',
+      SIZE = 10MB,
+      MAXSIZE = 100MB,
+      FILEGROWTH = 10MB
+  )
+  LOG ON (
+      NAME = testDB_log,
+      FILENAME = 'C:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\testDB_log.ldf',
+      SIZE = 5MB,
+      MAXSIZE = 50MB,
+      FILEGROWTH = 5MB
+  );
+
+MySQL Example with character set and collation:
+CREATE DATABASE testDB
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_general_ci;
+
+Common Uses
+- Create a separate database for a new application.
+- Create a test database for development or quality assurance.
+- Create a new tenant database in multi-tenant applications.
+
+Exercise Question
+What is the purpose of the SQL CREATE DATABASE statement?
+- To create a new SQL database
+
+Incorrect answers:
+- To create a new table in an existing database (wrong)
+- To delete an existing database (wrong)
+- To modify an existing database (wrong)
