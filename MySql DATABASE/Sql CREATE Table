@@ -1,0 +1,82 @@
+SQL CREATE TABLE Statement
+
+The SQL CREATE TABLE statement is used to create a new table in a database.
+
+A table stores related information in rows and columns. Each row is a record, and each column is a field.
+
+Syntax
+CREATE TABLE table_name (
+  column1 datatype constraint,
+  column2 datatype constraint,
+  column3 datatype constraint,
+  ....
+);
+
+- `table_name` specifies the name of the new table.
+- `column1`, `column2`, ... specify the column names in the table.
+- `datatype` specifies the type of data the column holds (for example: `int`, `varchar`, `date`).
+- `constraint` is optional and adds rules such as `PRIMARY KEY`, `NOT NULL`, or `UNIQUE`.
+
+Tip: Learn more about constraints in the SQL Constraints chapter.
+Tip: For an overview of available data types, see the Data Types Reference.
+
+CREATE TABLE Example
+The following example creates a table named `Persons` with five columns:
+
+Example:
+CREATE TABLE Persons (
+  PersonID int PRIMARY KEY,
+  LastName varchar(255) NOT NULL,
+  FirstName varchar(255),
+  Address varchar(255),
+  City varchar(255)
+);
+
+Example Explained:
+- `PersonID` is an integer column and is the `PRIMARY KEY`. This means each row must have a unique PersonID.
+- `LastName` is a variable-length string up to 255 characters. `NOT NULL` means this column cannot be left empty.
+- `FirstName`, `Address`, and `City` are also variable-length strings and may be empty unless you add `NOT NULL`.
+
+The empty `Persons` table will look like this:
+
+PersonID	LastName	FirstName	Address	City
+ 	 	 	 	 
+
+After creating the table, you can add data using `INSERT INTO`.
+
+Create a Table from an Existing Table
+You can create a new table and fill it with data from an existing table.
+This is useful when you want a copy of some data.
+
+Syntax:
+CREATE TABLE new_table AS
+SELECT column1, column2, ...
+FROM existing_table
+WHERE ...;
+
+Example:
+CREATE TABLE GermanCustomers AS
+SELECT * FROM Customers
+WHERE Country = 'Germany';
+
+Real-world example:
+Imagine you have a `Customers` table and need a new table for only German customers. This creates `GermanCustomers` with the same columns and rows where `Country = 'Germany'`.
+
+Important Notes:
+- `CREATE TABLE` only creates the table structure; it does not add rows unless you use `AS SELECT ...`.
+- Use meaningful column names so the data is easy to understand.
+- Choose the right data type for each column to store data efficiently.
+- `PRIMARY KEY` ensures each row can be uniquely identified.
+- `NOT NULL` prevents missing values in important columns.
+
+Simple language summary:
+`CREATE TABLE` makes a new container for data. You define the column names, what kind of data goes in each column, and any rules the data must follow.
+
+Exercise Question
+What is the primary purpose of the SQL CREATE TABLE statement?
+- To create a new table in a database
+
+Incorrect answers:
+- To insert data into a table (wrong)
+- To join a table (wrong)
+- To delete a table from a database (wrong)
