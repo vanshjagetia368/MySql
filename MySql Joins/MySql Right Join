@@ -1,0 +1,72 @@
+SQL RIGHT JOIN
+
+The RIGHT JOIN returns all rows from the right table (`table2`) and only the matched rows from the left table (`table1`).
+If there is no match in the left table, the columns from the left table will be `NULL`.
+
+The RIGHT JOIN and RIGHT OUTER JOIN keywords are equal. The `OUTER` keyword is optional.
+
+RIGHT JOIN Syntax
+SELECT column_name(s)
+FROM table1
+RIGHT JOIN table2
+ON table1.column_name = table2.column_name;
+
+- `table1` is the left table.
+- `table2` is the right table.
+- The `ON` clause defines the matching condition.
+- The result keeps every row from the right table, even when there is no matching row on the left.
+
+Simple explanation:
+Think of the right table as your main list and the left table as optional details. RIGHT JOIN keeps all items from the main list on the right, and adds data from the left only when there is a match.
+
+Demo Database Example
+Orders table:
+OrderID	CustomerID	EmployeeID	OrderDate	ShipperID
+10308	2	7	1996-09-18	3
+10309	37	3	1996-09-19	1
+10310	77	8	1996-09-20	2
+
+Employees table:
+EmployeeID	LastName	FirstName	BirthDate	Photo
+1	Davolio	Nancy	1968-12-08	EmpID1.pic
+2	Fuller	Andrew	1952-02-19	EmpID2.pic
+3	Leverling	Janet	1963-08-30	EmpID3.pic
+
+The related column between the tables is `EmployeeID`.
+
+RIGHT JOIN Example
+This query returns all employees and any orders they might have handled:
+
+Example:
+SELECT Orders.OrderID, Employees.LastName, Employees.FirstName
+FROM Orders
+RIGHT JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+ORDER BY Orders.OrderID;
+
+What this query does:
+- returns every row from `Employees` (the right table)
+- includes matching rows from `Orders`
+- shows `NULL` in the `Orders.OrderID` column when an employee has no matching order
+
+Important note:
+`RIGHT JOIN` returns all rows from the right table even when there are no matching rows in the left table.
+
+Real-world meaning:
+If you want to list all employees and also show their orders if any exist, RIGHT JOIN keeps every employee in the result and adds order data when available.
+
+When to use RIGHT JOIN:
+- When you want every row from the right table.
+- When the right table contains the primary data you need.
+- When the left table contains optional related data.
+
+Comparison to LEFT JOIN:
+- `LEFT JOIN` returns all rows from the left table.
+- `RIGHT JOIN` returns all rows from the right table.
+- If the same query is written with the tables swapped, LEFT JOIN and RIGHT JOIN can return equivalent results.
+
+Example with table aliases:
+SELECT o.OrderID, e.LastName, e.FirstName
+FROM Orders AS o
+RIGHT JOIN Employees AS e ON o.EmployeeID = e.EmployeeID;
+
+This query does the same work but uses shorter table names for readability.

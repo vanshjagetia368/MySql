@@ -1,0 +1,71 @@
+SQL Self Join
+
+A self join is a regular join, but the table is joined with itself.
+This allows you to compare rows in the same table as if they were two separate tables.
+
+Self Join Syntax
+SELECT column_name(s)
+FROM table1 T1, table1 T2
+WHERE condition;
+
+- `table1` is the same table used twice.
+- `T1` and `T2` are aliases that let you refer to the table in two different roles.
+- The `WHERE` clause defines how the two rows from the same table are related.
+
+Simple explanation:
+Think of a self join as making two copies of a table in one query. Each copy gets a different name, and then you can compare rows from the first copy to rows from the second copy.
+
+Why use a self join:
+- To compare rows within the same table.
+- To find matched pairs of rows based on a relationship inside the table.
+- To build hierarchical or paired relationships from one table.
+
+Demo Database Example
+Customers table:
+CustomerID	CustomerName	ContactName	Address	City	PostalCode	Country
+1	Alfreds Futterkiste	Maria Anders	Obere Str. 57	Berlin	12209	Germany
+2	Ana Trujillo Emparedados y helados	Ana Trujillo	Avda. de la Constitución 2222	México D.F.	05021	Mexico
+3	Antonio Moreno Taquería	Antonio Moreno	Mataderos 2312	México D.F.	05023	Mexico
+
+Self Join Example
+The following SQL statement matches customers that are from the same city:
+
+Example:
+SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
+FROM Customers A, Customers B
+WHERE A.CustomerID <> B.CustomerID
+AND A.City = B.City
+ORDER BY A.City;
+
+What this query does:
+- `Customers A` and `Customers B` are the same table, but with different aliases.
+- `A.CustomerID <> B.CustomerID` prevents a row from matching itself.
+- `A.City = B.City` finds pairs of customers who live in the same city.
+- The query returns customer pairs with the same city.
+
+Result meaning:
+- Each row shows two different customers from the same city.
+- If `A.City` and `B.City` match, the customers are grouped by city.
+- Because the same table is used twice, we can compare rows against other rows in the same table.
+
+Real-world example:
+Imagine you want to find customers who live in the same city as another customer. A self join lets you compare each customer record to every other customer record.
+
+Best practices:
+- Always use aliases like `A` and `B` to make the query readable.
+- Use a condition like `A.CustomerID <> B.CustomerID` to avoid matching the same row to itself.
+- Use clear column names in the `SELECT` list to show where each value comes from.
+
+Alternative syntax using explicit JOIN:
+SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
+FROM Customers A
+INNER JOIN Customers B ON A.City = B.City
+AND A.CustomerID <> B.CustomerID
+ORDER BY A.City;
+
+This version is the same query, written with `INNER JOIN` instead of a comma-separated table list.
+
+Summary:
+- A self join joins a table to itself.
+- Aliases let you treat the table as two separate sources.
+- It is useful for comparing rows within the same table.

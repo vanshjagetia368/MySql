@@ -1,0 +1,62 @@
+SQL NATURAL JOIN
+
+The NATURAL JOIN automatically joins two tables using columns with the same name in both tables.
+It matches every pair of columns that share the same name and data type.
+
+NATURAL JOIN Syntax
+SELECT column_name(s)
+FROM table1
+NATURAL JOIN table2;
+
+- `table1` and `table2` are the tables being joined.
+- The join automatically compares columns with identical names.
+- You do not write an `ON` clause when using NATURAL JOIN.
+
+Simple explanation:
+NATURAL JOIN works like a smart join that finds the matching columns in both tables for you. If both tables have a column called `CustomerID`, it joins on that column automatically.
+
+Important note:
+Because NATURAL JOIN joins on every column with the same name, it can be dangerous if the tables share unexpected column names. Use it only when you know the matching columns clearly.
+
+Demo Database Example
+Products table:
+ProductID	ProductName	CategoryID	Price
+3	Aniseed Syrup	2	10.00
+
+Categories table:
+CategoryID	CategoryName	Description
+2	Condiments	Sweet and savory sauces, relishes, spreads, and seasonings
+
+The shared column between the tables is `CategoryID`.
+
+NATURAL JOIN Example
+Example:
+SELECT ProductID, ProductName, CategoryName
+FROM Products
+NATURAL JOIN Categories;
+
+What this query does:
+- It automatically joins `Products` and `Categories` on `CategoryID`.
+- It returns the product and category information in one row.
+
+What to watch for:
+- If both tables share more than one column name, NATURAL JOIN joins on all of them.
+- If the tables have columns with the same name but different meanings, NATURAL JOIN may produce unexpected results.
+- NATURAL JOIN does not allow an explicit `ON` clause because the matching is implicit.
+
+When to use NATURAL JOIN:
+- When both tables share a clear common key with the same name.
+- When you want shorter SQL and the table columns are predictable.
+- When you are comfortable letting the database choose the join columns automatically.
+
+Alternative using explicit JOIN:
+SELECT Products.ProductID, Products.ProductName, Categories.CategoryName
+FROM Products
+INNER JOIN Categories ON Products.CategoryID = Categories.CategoryID;
+
+This explicit version is safer because it defines the join condition clearly.
+
+Summary:
+- `NATURAL JOIN` joins tables using all columns with the same name.
+- It is shorter but less explicit than `INNER JOIN ... ON`.
+- Use it carefully to avoid accidental matches on unrelated columns.

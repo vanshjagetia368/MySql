@@ -1,0 +1,85 @@
+SQL FULL JOIN
+
+The FULL JOIN returns all rows when there is a match in either the left table or the right table.
+If a row in the left table has no match in the right table, the result includes the left row and `NULL` values for the right table columns.
+If a row in the right table has no match in the left table, the result includes the right row and `NULL` values for the left table columns.
+
+The FULL JOIN and FULL OUTER JOIN keywords mean the same thing. The `OUTER` keyword is optional.
+
+Note: FULL JOIN can potentially return very large result sets because it keeps rows from both tables.
+
+FULL JOIN Syntax
+SELECT column_name(s)
+FROM table1
+FULL JOIN table2
+ON table1.column_name = table2.column_name;
+
+- `table1` is the left table.
+- `table2` is the right table.
+- The `ON` clause defines the matching condition between the tables.
+- Rows are included even when only one side has a matching row.
+
+Simple explanation:
+Think of FULL JOIN as combining all rows from both tables. If a row from one table does not have a matching row in the other table, the result still includes it with empty values on the missing side.
+
+Demo Database Example
+Customers table:
+CustomerID	CustomerName	ContactName	Address	City	PostalCode	Country
+1	Alfreds Futterkiste	Maria Anders	Obere Str. 57	Berlin	12209	Germany
+2	Ana Trujillo Emparedados y helados	Ana Trujillo	Avda. de la Constitución 2222	México D.F.	05021	Mexico
+3	Antonio Moreno Taquería	Antonio Moreno	Mataderos 2312	México D.F.	05023	Mexico
+
+Orders table:
+OrderID	CustomerID	EmployeeID	OrderDate	ShipperID
+10308	2	7	1996-09-18	3
+10309	37	3	1996-09-19	1
+10310	77	8	1996-09-20	2
+
+The related column between the tables is `CustomerID`.
+
+FULL JOIN Example
+This query selects all customers and all orders, matching by `CustomerID` when possible:
+
+Example:
+SELECT Customers.CustomerName, Orders.OrderID
+FROM Customers
+FULL JOIN Orders
+ON Customers.CustomerID = Orders.CustomerID;
+
+Example result set:
+CustomerName	OrderID
+NULL	10309
+NULL	10310
+Alfreds Futterkiste	NULL
+Ana Trujillo Emparedados y helados	10308
+Antonio Moreno Taquería	NULL
+
+What this result means:
+- Rows with `NULL` in `CustomerName` come from orders with no matching customer.
+- Rows with `NULL` in `OrderID` come from customers with no matching orders.
+- Rows where both values are present are matches found in both tables.
+
+Why use FULL JOIN:
+- When you want every row from both tables.
+- When you want to see unmatched rows from either side.
+- When you need a complete picture of related data, including missing links.
+
+Real-life example:
+Imagine one table lists all customers and another table lists all orders. A FULL JOIN gives you every customer and every order, showing where there is no connection between them.
+
+Important notes:
+- FULL JOIN is not supported by all database systems. Some systems use a combination of `LEFT JOIN`, `UNION`, and `RIGHT JOIN` to achieve the same result.
+- Because it returns all rows from both tables, it can produce a large number of rows.
+
+Example with aliases:
+SELECT c.CustomerName, o.OrderID
+FROM Customers AS c
+FULL JOIN Orders AS o
+ON c.CustomerID = o.CustomerID;
+
+This version is easier to read when working with longer table names.
+
+Summary:
+- `LEFT JOIN`: all rows from the left table, matched rows from the right.
+- `RIGHT JOIN`: all rows from the right table, matched rows from the left.
+- `FULL JOIN`: all rows from both tables, matched when possible and `NULL` otherwise.

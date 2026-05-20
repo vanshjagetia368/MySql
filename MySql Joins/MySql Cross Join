@@ -1,0 +1,70 @@
+SQL CROSS JOIN
+
+The CROSS JOIN returns the Cartesian product of two tables.
+This means every row from the first table is combined with every row from the second table.
+
+CROSS JOIN Syntax
+SELECT column_name(s)
+FROM table1
+CROSS JOIN table2;
+
+- `table1` and `table2` are the tables being joined.
+- The result contains every possible row combination from both tables.
+- There is no `ON` clause with CROSS JOIN.
+
+Simple explanation:
+CROSS JOIN pairs each row from the first table with each row from the second table. If the first table has 3 rows and the second has 2 rows, the result will have 6 rows.
+
+Demo Database Example
+Colors table:
+ColorID	ColorName
+1	Red
+2	Blue
+
+Sizes table:
+SizeID	SizeName
+1	Small
+2	Large
+
+CROSS JOIN Example
+Example:
+SELECT Colors.ColorName, Sizes.SizeName
+FROM Colors
+CROSS JOIN Sizes;
+
+Example result set:
+ColorName	SizeName
+Red	Small
+Red	Large
+Blue	Small
+Blue	Large
+
+What this query does:
+- It creates every combination of color and size.
+- It does not require any matching column.
+- It is useful when you need to pair all values from one list with all values from another.
+
+Common uses:
+- Generate a list of all possible combinations.
+- Create test scenarios or sample data sets.
+- Combine dimension values in reports.
+
+Important note:
+CROSS JOIN can create a very large result set when both tables have many rows. Use it carefully to avoid performance issues.
+
+Alternative syntax:
+You can also write a CROSS JOIN by listing tables separated by commas without a `WHERE` condition:
+SELECT Colors.ColorName, Sizes.SizeName
+FROM Colors, Sizes;
+
+This produces the same result, but `CROSS JOIN` is clearer and recommended for readability.
+
+When to use CROSS JOIN:
+- When you need all possible combinations of rows.
+- When there is no natural relationship between the tables.
+- When the result set size is manageable.
+
+Summary:
+- `CROSS JOIN` returns the Cartesian product of two tables.
+- It pairs every row in the first table with every row in the second.
+- It is useful for combinations, but can produce large results quickly.

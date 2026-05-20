@@ -1,0 +1,116 @@
+SQL INNER JOIN
+
+The INNER JOIN returns only rows that have matching values in both tables.
+
+Tip: You can use just `JOIN` instead of `INNER JOIN`, because `INNER` is the default join type.
+
+INNER JOIN Syntax
+SELECT column_name(s)
+FROM table1
+INNER JOIN table2
+ON table1.column_name = table2.column_name;
+
+- `table1` and `table2` are the names of the tables you want to join.
+- The `ON` keyword defines the matching condition between the two tables.
+- The join returns only rows where the condition is true in both tables.
+
+Simple explanation:
+Imagine two lists of information. INNER JOIN returns only the items that appear in both lists and match on a shared value.
+
+Example data in Products table:
+ProductID	ProductName	CategoryID	Price
+3	Aniseed Syrup	2	10.00
+
+Example data in Categories table:
+CategoryID	CategoryName	Description
+2	Condiments	Sweet and savory sauces, relishes, spreads, and seasonings
+
+The related column between the two tables is `CategoryID`.
+
+INNER JOIN Example
+SELECT ProductID, ProductName, CategoryName
+FROM Products
+INNER JOIN Categories ON Products.CategoryID = Categories.CategoryID;
+
+What this query does:
+- It finds rows in `Products` and `Categories` where `Products.CategoryID` equals `Categories.CategoryID`.
+- It returns only rows that match in both tables.
+- The result includes `ProductID`, `ProductName`, and `CategoryName`.
+
+Important note:
+If a product has no `CategoryID`, or the `CategoryID` value is not found in `Categories`, that product row will not appear in the result.
+
+Naming the Columns
+It is good practice to include the table name when specifying columns in joins.
+
+Example:
+SELECT Products.ProductID, Products.ProductName, Categories.CategoryName
+FROM Products
+INNER JOIN Categories ON Products.CategoryID = Categories.CategoryID;
+
+Why this is helpful:
+- If both tables have a column with the same name, the database needs to know which one you mean.
+- For example, if you also include `CategoryID` in the SELECT list, you must write `Products.CategoryID` or `Categories.CategoryID`.
+
+JOIN or INNER JOIN
+`JOIN` and `INNER JOIN` return the same result.
+
+Example:
+SELECT Products.ProductID, Products.ProductName, Categories.CategoryName
+FROM Products
+JOIN Categories ON Products.CategoryID = Categories.CategoryID;
+
+This query behaves exactly the same as the `INNER JOIN` example above.
+
+JOIN Multiple Tables
+You can join more than two tables by adding more `INNER JOIN` clauses.
+
+Example:
+SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
+FROM Orders
+INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID
+INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID;
+
+Here is the Shippers table:
+ShipperID	ShipperName	Phone
+1	Speedy Express	(503) 555-9831
+2	United Package	(503) 555-3199
+3	Federal Shipping	(503) 555-9931
+
+How this works:
+- The query first joins `Orders` with `Customers` using `CustomerID`.
+- Then it joins the result with `Shippers` using `ShipperID`.
+- The final result contains rows only when a matching order, customer, and shipper all exist.
+
+Real-life meaning:
+If you want to see which customer placed an order and which shipper will deliver it, INNER JOIN combines the data from the three tables into a single result.
+
+When to use INNER JOIN:
+- Use it when you only want rows with matching values in both tables.
+- Use it when the relationship between tables is required for the data you need.
+
+What INNER JOIN does not return:
+- Rows from the left table without a match in the right table.
+- Rows from the right table without a match in the left table.
+
+Common columns used in JOINs:
+- Primary key in one table (for example, `CategoryID`, `CustomerID`, `OrderID`)
+- Foreign key in the other table that refers to that primary key.
+
+Example of related tables:
+- `Products.CategoryID` is a foreign key that points to `Categories.CategoryID`.
+- `Orders.CustomerID` is a foreign key that points to `Customers.CustomerID`.
+- `Orders.ShipperID` is a foreign key that points to `Shippers.ShipperID`.
+
+Example with table aliases:
+Using aliases makes long queries easier to read.
+
+Example:
+SELECT p.ProductID, p.ProductName, c.CategoryName
+FROM Products AS p
+INNER JOIN Categories AS c ON p.CategoryID = c.CategoryID;
+
+This query is the same as the earlier example but uses `p` and `c` as shorter names for the tables.
+
+Exercise summary:
+`INNER JOIN` is a powerful way to combine related information from two or more tables, returning only the rows that match on the join condition.
